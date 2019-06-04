@@ -14,10 +14,13 @@ namespace block_auth_api.Orchestration.DeviceContract
 
         public int GetNumDevices()
         {
-            var numDevices = _ContractManager.GetContract().GetFunction("userCount").CallAsync<BigInteger>();
-            numDevices.Wait();
+            var voteContract = _ContractManager.GetContract();
 
-            return 1;
+            var deviceCountFunction = voteContract.GetFunction("userCount").CallAsync<BigInteger>();
+            deviceCountFunction.Wait();
+            var deviceCount = (int)deviceCountFunction.Result;
+
+            return deviceCount;
         }
     }
 }

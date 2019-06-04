@@ -14,10 +14,13 @@ namespace block_auth_api.Orchestration.UsersContract
 
         public int GetNumUsers()
         {
-            var numUsers = _ContractManager.GetContract().GetFunction("userCount").CallAsync<BigInteger>();
-            numUsers.Wait();
+            var loginContract = _ContractManager.GetContract();
 
-            return 1;
+            var userCountFunction = loginContract.GetFunction("deviceCount").CallAsync<BigInteger>();
+            userCountFunction.Wait();
+            var userCount = (int)userCountFunction.Result;
+
+            return userCount;
         }
     }
 }
