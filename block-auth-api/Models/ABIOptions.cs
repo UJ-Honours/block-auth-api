@@ -4,6 +4,7 @@ namespace VotingSystemAPI.Models
 {
     public class ABIOptions
     {
+        public bool anonymous { get; set; }
         public bool constant { get; set; }
         public List<ABIInputs> inputs { get; set; } = new List<ABIInputs>();
         public string name { get; set; }
@@ -11,5 +12,6 @@ namespace VotingSystemAPI.Models
         public bool payable { get; set; }
         public string stateMutability { get; set; }
         public string type { get; set; }
+        public string Signature { get; set; }
     }
 }
