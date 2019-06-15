@@ -1,5 +1,7 @@
-﻿using block_auth_api.Orchestration.DeviceContract;
+﻿using block_auth_api.Models;
+using block_auth_api.Orchestration.DeviceContract;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace block_auth_api.Controllers
 {
@@ -15,9 +17,35 @@ namespace block_auth_api.Controllers
         }
 
         [HttpGet]
+        [Route("Devices")]
         public ActionResult<int> GetNumDevices()
         {
             return _DCO.GetNumDevices();
+        }
+
+        
+        [HttpGet]
+        public ActionResult<List<Device>> Get()
+        {
+            return new List<Device>();
+        }
+
+        [HttpPost]
+        public ActionResult<Device> AddDevice()
+        {
+            return new Device { };
+        }
+
+        [HttpDelete]
+        public ActionResult<Device> DeleteDevice()
+        {
+            return new Device { };
+        }
+
+        [HttpPut]
+        public ActionResult<Device> UpdateDevice()
+        {
+            return new Device { };
         }
     }
 }
