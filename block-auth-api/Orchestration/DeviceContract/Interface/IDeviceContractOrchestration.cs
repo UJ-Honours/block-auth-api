@@ -3,5 +3,9 @@
     public interface IDeviceContractOrchestration
     {
         int GetNumDevices();
+
+        void ShouldBeAbleCallAndReadEventLogs();
     }
+
+
 }

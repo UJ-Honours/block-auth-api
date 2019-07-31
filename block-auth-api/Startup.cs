@@ -1,5 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
+using block_auth_api.Orchestration.AccountContract;
 using block_auth_api.Orchestration.DeviceContract;
 using block_auth_api.Orchestration.UsersContract;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +26,7 @@ namespace block_auth_api
         {
             services.AddSingleton<IContractManager, ContractManager>();
 
+            services.AddSingleton<IAccountContractOrchestration, AccountContractOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
 
@@ -40,6 +42,16 @@ namespace block_auth_api
 
             var MVC_VERSION = CompatibilityVersion.Version_2_2;
             services.AddMvc().SetCompatibilityVersion(MVC_VERSION);
+
+            services.AddCors(options1 =>
+            {
+                options1.AddPolicy("MyCorsPolicy", builder => builder
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader());
+                //.WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +66,7 @@ namespace block_auth_api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseCors("MyCorsPolicy");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
