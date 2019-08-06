@@ -61,7 +61,7 @@ namespace block_auth_api.Controllers
             };
             var client = new RestClient("http://192.168.8.186:8081");
             var responseB = client.Post<LoggedIn>(requestB);
-            return Ok(responseB.Content);
+            return Ok(responseB.Data);
         }
 
         [HttpPost]
