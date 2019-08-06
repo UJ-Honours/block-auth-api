@@ -4,7 +4,6 @@
     {
         int GetNumDevices();
 
-        void ShouldBeAbleCallAndReadEventLogs();
     }
 
 
