@@ -1,6 +1,4 @@
 ﻿using block_auth_api.Connection;
-using Nethereum.Contracts;
-using System;
 using System.Numerics;
 
 namespace block_auth_api.Orchestration.DeviceContract
