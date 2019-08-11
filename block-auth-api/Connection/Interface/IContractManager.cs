@@ -6,7 +6,9 @@ namespace block_auth_api.Connection
     {
         Contract GetContract();
 
-        string ContractKey();
+        string AdminAccount();
+
+        string GetConnectionString();
         
-       }
+    }
 }

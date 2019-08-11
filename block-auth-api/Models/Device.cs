@@ -7,7 +7,13 @@ namespace block_auth_api.Models
         [JsonProperty("id")]
         public int Id { get; set; }
 
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("account")]
+        public string Account { get; set; }
+
         [JsonProperty("ip")]
-        public string IP { get; set; }
+        public string Ip { get; set; }
     }
 }

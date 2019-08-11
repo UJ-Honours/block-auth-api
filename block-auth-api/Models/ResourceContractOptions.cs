@@ -11,6 +11,8 @@ namespace block_auth_api.Models
 
         public List<ABIOptions> ABI { get; set; }
 
-        public string privateKey { get; set; }
+        public string AdminAccount { get; set; }
+
+        public string ConnectionString { get; set; }
     }
 }

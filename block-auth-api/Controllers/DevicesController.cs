@@ -1,9 +1,13 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
 using block_auth_api.Orchestration.DeviceContract;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Nethereum.Hex.HexTypes;
 using RestSharp;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Numerics;
 
 namespace block_auth_api.Controllers
@@ -23,22 +27,38 @@ namespace block_auth_api.Controllers
 
         [HttpGet]
         [Route("devices")]
-        public ActionResult GetDevice() {
+        public ActionResult GetDevices()
+        {
+            string sqlIoTDeviceDetails = "SELECT * FROM IoTDevice;";
+            var iotDeviceDic = new Dictionary<string, List<Device>>();
+            using (var connection = new SqlConnection(_ContractManager.GetConnectionString()))
+            {
+                var iotDevice = connection.Query<Device>(sqlIoTDeviceDetails).ToList();
+                iotDeviceDic.Add("devices", iotDevice);
+                return Ok(iotDeviceDic);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("device/{url}")]
+        public ActionResult GetDevice(string url = "http://192.168.8.186:8081") {
             var requestA = new RestRequest()
             {
                 Method = Method.GET,
                 Resource = "/"
             };
-            var client = new RestClient("http://192.168.8.186:8081");
+            var client = new RestClient(url);
             var responseA = client.Execute(requestA);
             return Ok(responseA.Content);
+
         }
 
         [HttpPost]
         [Route("devices_trigger_event")]
         public ActionResult TriggerEvent()
         {
-            var accountAddress = "0x9ada8c4979caad44fe7a2b6fb6a45bcd67b8657e";
+            var accountAddress = _ContractManager.AdminAccount();
             var gas = new HexBigInteger(new BigInteger(400000));
             var value = new HexBigInteger(new BigInteger(0));
 
@@ -49,6 +69,29 @@ namespace block_auth_api.Controllers
             loginFunction.Wait();
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("add_device")]
+        public ActionResult AddDevice([FromBody] Device device)
+        {
+            var accountAddress = _ContractManager.AdminAccount();
+            var gas = new HexBigInteger(new BigInteger(400000));
+            var value = new HexBigInteger(new BigInteger(0));
+
+            var loginFunction = _ContractManager
+                .GetContract()
+                .GetFunction("addDevice")
+                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Account);
+            loginFunction.Wait();
+
+            string iotDeviceInsert = "INSERT INTO IoTDevice (Name,Account,IP) Values (@Name,@Account,@IP);";
+
+            using (var connection = new SqlConnection(_ContractManager.GetConnectionString()))
+            {
+                var affectedRows = connection.Execute(iotDeviceInsert, new { device.Name, device.Account,device.Ip });
+            }
+            return Ok(device);
         }
 
         [HttpPost]
@@ -65,7 +108,7 @@ namespace block_auth_api.Controllers
         }
 
         [HttpPost]
-        [Route("devices_connect")]
+        [Route("devices_connect/{url}")]
         public ActionResult AccessDevice([FromBody] LoggedIn loggedIn)
         {
             if (!ModelState.IsValid) {
@@ -77,8 +120,8 @@ namespace block_auth_api.Controllers
                 Method = Method.POST,
                 Resource = "/connect"
             };
-
-            var client = new RestClient("http://192.168.8.186:8081");
+            string url = "http://192.168.8.186:8081";
+            var client = new RestClient(url);
             requestC.AddParameter("message", $"{loggedIn.Token}");
             var responseC = client.Execute(requestC);
 

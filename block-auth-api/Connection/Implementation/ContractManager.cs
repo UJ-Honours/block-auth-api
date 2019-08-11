@@ -8,7 +8,8 @@ namespace block_auth_api.Connection
     public class ContractManager : IContractManager
     {
         private readonly Contract _ResourceContract;
-        private readonly string _PrivateKey;
+        private readonly string _AdminAccount;
+        private readonly string _ConnectionString;
 
         public ContractManager(ResourceContractOptions rco)
         {
@@ -17,7 +18,8 @@ namespace block_auth_api.Connection
             var endpoint = rco.Endpoint;
             var web3 = new Web3(endpoint);
             _ResourceContract = web3.Eth.GetContract(abi, contractAddress);
-            _PrivateKey = rco.privateKey;
+            _AdminAccount = rco.AdminAccount;
+            _ConnectionString = rco.ConnectionString;
         }
 
         public Contract GetContract()
@@ -25,8 +27,13 @@ namespace block_auth_api.Connection
             return _ResourceContract;
         }
 
-        public string ContractKey() {
-            return _PrivateKey;
+        public string AdminAccount() {
+            return _AdminAccount;
+        }
+
+        public string GetConnectionString()
+        {
+            return _ConnectionString;
         }
     }
 }
