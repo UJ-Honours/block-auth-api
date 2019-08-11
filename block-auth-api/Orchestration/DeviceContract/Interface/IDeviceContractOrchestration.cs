@@ -2,7 +2,6 @@
 {
     public interface IDeviceContractOrchestration
     {
-        int GetNumDevices();
 
     }
 

@@ -12,16 +12,6 @@ namespace block_auth_api.Orchestration.DeviceContract
             _ContractManager = contractManager;
         }
 
-        public int GetNumDevices()
-        {
-            var voteContract = _ContractManager.GetContract();
-
-            var deviceCountFunction = voteContract.GetFunction("userCount").CallAsync<BigInteger>();
-            deviceCountFunction.Wait();
-            var deviceCount = (int)deviceCountFunction.Result;
-
-            return deviceCount;
-        }
 
         
     }

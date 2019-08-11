@@ -31,12 +31,22 @@ namespace block_auth_api.Controllers
         {
             string sqlIoTDeviceDetails = "SELECT * FROM IoTDevice;";
             var iotDeviceDic = new Dictionary<string, List<Device>>();
-            using (var connection = new SqlConnection(_ContractManager.GetConnectionString()))
+
+
+            /*using (var connection = new SqlConnection(_ContractManager.GetConnectionString()))
             {
                 var iotDevice = connection.Query<Device>(sqlIoTDeviceDetails).ToList();
                 iotDeviceDic.Add("devices", iotDevice);
                 return Ok(iotDeviceDic);
-            }
+            }*/
+
+            var getDevicesFunction = _ContractManager
+                .GetDevicesFunction()
+                .CallDeserializingToObjectAsync<Device>(0);
+            getDevicesFunction.Wait();
+
+
+            return Ok(getDevicesFunction.Result);
 
         }
 
@@ -63,8 +73,7 @@ namespace block_auth_api.Controllers
             var value = new HexBigInteger(new BigInteger(0));
 
             var loginFunction = _ContractManager
-                .GetContract()
-                .GetFunction("login_admin")
+                .GetLoginAdminFunction()
                 .SendTransactionAsync(accountAddress, gas, value);
             loginFunction.Wait();
 
@@ -80,9 +89,8 @@ namespace block_auth_api.Controllers
             var value = new HexBigInteger(new BigInteger(0));
 
             var loginFunction = _ContractManager
-                .GetContract()
-                .GetFunction("addDevice")
-                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Account);
+                .GetAddDeviceFunction()
+                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Account,device.Ip);
             loginFunction.Wait();
 
             string iotDeviceInsert = "INSERT INTO IoTDevice (Name,Account,IP) Values (@Name,@Account,@IP);";

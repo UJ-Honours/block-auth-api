@@ -12,15 +12,5 @@ namespace block_auth_api.Orchestration.UsersContract
             _ContractManager = contractManager;
         }
 
-        public int GetNumUsers()
-        {
-            var loginContract = _ContractManager.GetContract();
-
-            var userCountFunction = loginContract.GetFunction("deviceCount").CallAsync<BigInteger>();
-            userCountFunction.Wait();
-            var userCount = (int)userCountFunction.Result;
-
-            return userCount;
-        }
     }
 }

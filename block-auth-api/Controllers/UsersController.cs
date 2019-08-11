@@ -43,11 +43,10 @@ namespace block_auth_api.Controllers
             var gas = new HexBigInteger(new BigInteger(400000));
             var value = new HexBigInteger(new BigInteger(0));
 
-            var loginFunction = _ContractManager
-                .GetContract()
-                .GetFunction("addUser")
+            var addUserFunction = _ContractManager
+                .GetAddUserFunction()
                 .SendTransactionAsync(accountAddress, gas, value, user.Name, user.Account);
-            loginFunction.Wait();
+            addUserFunction.Wait();
 
             string iotUserInsert = "INSERT INTO IoTUser (Name,Account) Values (@Name,@Account);";
 

@@ -22,9 +22,28 @@ namespace block_auth_api.Connection
             _ConnectionString = rco.ConnectionString;
         }
 
-        public Contract GetContract()
+        public Function GetLoginAdminFunction()
         {
-            return _ResourceContract;
+            return _ResourceContract.GetFunction("login_admin");
+        }
+
+        public Function GetAddUserFunction()
+        {
+            return _ResourceContract.GetFunction("addUser");
+        }
+        
+        public Function GetUsersFunction()
+        {
+            return _ResourceContract.GetFunction("getNthUsers");
+        }
+        public Function GetDevicesFunction()
+        {
+            return _ResourceContract.GetFunction("getNthDevice");
+        }
+
+        public Function GetAddDeviceFunction()
+        {
+            return _ResourceContract.GetFunction("addDevice");
         }
 
         public string AdminAccount() {
@@ -35,5 +54,6 @@ namespace block_auth_api.Connection
         {
             return _ConnectionString;
         }
+
     }
 }
