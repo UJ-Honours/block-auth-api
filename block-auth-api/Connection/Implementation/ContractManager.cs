@@ -9,7 +9,6 @@ namespace block_auth_api.Connection
     {
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
-        private readonly string _ConnectionString;
 
         public ContractManager(ResourceContractOptions rco)
         {
@@ -19,7 +18,6 @@ namespace block_auth_api.Connection
             var web3 = new Web3(endpoint);
             _ResourceContract = web3.Eth.GetContract(abi, contractAddress);
             _AdminAccount = rco.AdminAccount;
-            _ConnectionString = rco.ConnectionString;
         }
 
         public Function GetLoginAdminFunction()
@@ -34,11 +32,32 @@ namespace block_auth_api.Connection
         
         public Function GetUsersFunction()
         {
-            return _ResourceContract.GetFunction("getNthUsers");
+            return _ResourceContract.GetFunction("users");
         }
+
+        public Function GetUserCountFunction()
+        {
+            return _ResourceContract.GetFunction("userCount");
+        }
+
+        public Function GetDeviceCountFunction()
+        {
+            return _ResourceContract.GetFunction("deviceCount");
+        }
+
         public Function GetDevicesFunction()
         {
-            return _ResourceContract.GetFunction("getNthDevice");
+            return _ResourceContract.GetFunction("devices");
+        }
+
+        public Function GetDocumentsFunction()
+        {
+            return _ResourceContract.GetFunction("documents");
+        }
+
+        public Function GetStoreDocumentFunction()
+        {
+            return _ResourceContract.GetFunction("StoreDocument");
         }
 
         public Function GetAddDeviceFunction()
@@ -49,11 +68,5 @@ namespace block_auth_api.Connection
         public string AdminAccount() {
             return _AdminAccount;
         }
-
-        public string GetConnectionString()
-        {
-            return _ConnectionString;
-        }
-
     }
 }

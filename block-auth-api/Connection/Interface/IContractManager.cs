@@ -6,8 +6,6 @@ namespace block_auth_api.Connection
     {
         string AdminAccount();
 
-        string GetConnectionString();
-
         Function GetLoginAdminFunction();
 
         Function GetAddUserFunction();
@@ -17,5 +15,13 @@ namespace block_auth_api.Connection
         Function GetUsersFunction();
 
         Function GetDevicesFunction();
+
+        Function GetDocumentsFunction();
+
+        Function GetStoreDocumentFunction();
+
+        Function GetUserCountFunction();
+
+        Function GetDeviceCountFunction();
     }
 }

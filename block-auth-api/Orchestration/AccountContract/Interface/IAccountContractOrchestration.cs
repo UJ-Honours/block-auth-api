@@ -1,9 +1,14 @@
-﻿namespace block_auth_api.Orchestration.AccountContract
+﻿using block_auth_api.Models;
+using System.Collections.Generic;
+
+namespace block_auth_api.Orchestration.AccountContract
 {
     public interface IAccountContractOrchestration
     {
-        string GetAccount();
+        BlockAuthAccount GetAccount();
 
-        string CreateAccount();
+        Dictionary<string, List<BlockAuthAccount>> GetAccounts();
+
+        BlockAuthAccount CreateAccount();
     }
 }

@@ -3,12 +3,15 @@ using block_auth_api.Models;
 using block_auth_api.Orchestration.AccountContract;
 using block_auth_api.Orchestration.DeviceContract;
 using block_auth_api.Orchestration.UsersContract;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Text;
 
 namespace block_auth_api
 {
@@ -52,6 +55,22 @@ namespace block_auth_api
                     .AllowAnyHeader());
                 //.WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = Configuration["Jwt:Issuer"],
+            ValidAudience = Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+        };
+    });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,7 +91,7 @@ namespace block_auth_api
             {
                 c.SwaggerEndpoint("v1/swagger.json", "Blockchain Voting System API");
             });
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
