@@ -1,11 +1,12 @@
 ﻿using block_auth_api.Orchestration.AccountContract;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class AccountsController:Controller
+    public class AccountsController : Controller
     {
         private readonly IAccountContractOrchestration _ACO;
 
@@ -18,18 +19,30 @@ namespace block_auth_api.Controllers
         [Route("account")]
         public ActionResult GetAccount()
         {
-            var account = _ACO.GetAccount();
-            return Ok(account);
+            try
+            {
+                var account = _ACO.GetAccount();
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         [Route("account")]
         public ActionResult CreateAccount()
         {
-            var account = _ACO.CreateAccount();
-            return Ok(account);
+            try
+            {
+                var account = _ACO.CreateAccount();
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-        
     }
 }

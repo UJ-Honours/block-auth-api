@@ -1,80 +1,51 @@
 ﻿using block_auth_api.Models;
+using block_auth_api.Orchestration.TokenOrchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace block_auth_api.Controllers
 {
-    public class TokenController:Controller
+    [Produces("application/json")]
+    [Route("api/[controller]")]
+    public class TokenController : Controller
     {
-        private IConfiguration _config;
+        private readonly ITokenOrchestration _TokenOrchestration;
 
-        public TokenController(IConfiguration config)
+        public TokenController(ITokenOrchestration tokenOrchestration)
         {
-            _config = config;
+            _TokenOrchestration = tokenOrchestration;
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreateToken([FromBody]LoginVM login)
+        [Route("create_token")]
+        public ActionResult CreateToken([FromBody]UserVM login)
         {
-            var user = await Authenticate(login);
-
-            if (user != null)
+            try
             {
-                var tokenString = BuildToken(user);
-                return Ok(new { token = tokenString });
+                if (ModelState.IsValid)
+                {
+                    var user = _TokenOrchestration.Authenticate(login);
+
+                    if (user != null)
+                    {
+                        var tokenString = _TokenOrchestration.BuildToken(login);
+                        return Ok(new { token = tokenString });
+                    }
+
+                    return Unauthorized();
+                }
+                else
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
             }
-
-            return Unauthorized();
-        }
-
-        private string BuildToken(UserVM user)
-        {
-            var claims = new[] {
-            new Claim(JwtRegisteredClaimNames.Sub,
-                      user.Account),
-            new Claim(
-                JwtRegisteredClaimNames.GivenName,
-                user.Name),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Audience"],
-              claims,
-              expires: DateTime.Now.AddMinutes(30),
-              signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private async Task<UserVM> Authenticate(LoginVM login)
-        {
-            // TODO: this method will authenticate the user recovering the Ethereum address from signature using the Geth RPC web3.personal.ecrecover API
-
-            UserVM user = user = new UserVM { Account = login.Signer, Name = string.Empty, Email = string.Empty };
-
-            return user;
-        }
-
-        private async Task<UserVM> Authenticate2(LoginVM login)
-        {
-            // TODO: This method will authenticate the user recovering his Ethereum address through underlaying offline ecrecover method.
-
-            UserVM user = user = new UserVM { Account = login.Signer, Name = string.Empty, Email = string.Empty };
-
-            return user;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

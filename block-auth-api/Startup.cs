@@ -2,6 +2,7 @@
 using block_auth_api.Models;
 using block_auth_api.Orchestration.AccountContract;
 using block_auth_api.Orchestration.DeviceContract;
+using block_auth_api.Orchestration.TokenOrchestration;
 using block_auth_api.Orchestration.UsersContract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -24,15 +25,20 @@ namespace block_auth_api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        private void InjectOrchestration(IServiceCollection services)
         {
             services.AddSingleton<IContractManager, ContractManager>();
 
             services.AddSingleton<IAccountContractOrchestration, AccountContractOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
+            services.AddSingleton<ITokenOrchestration, TokenOrchestration>();
+        }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            InjectOrchestration(services);
             var contract = Configuration.GetSection("Contract")
                 .Get<ResourceContractOptions>();
             services.AddSingleton(contract);
