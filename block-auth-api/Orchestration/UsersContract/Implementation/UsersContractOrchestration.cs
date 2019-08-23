@@ -1,5 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
+using block_auth_api.Orchestration.AccountContract;
 using Nethereum.Hex.HexTypes;
 using System.Collections.Generic;
 using System.Numerics;
@@ -9,21 +10,26 @@ namespace block_auth_api.Orchestration.UsersContract
     public class UsersContractOrchestration : IUsersContractOrchestration
     {
         private readonly IContractManager _ContractManager;
+        private readonly IAccountContractOrchestration _ACO;
 
-        public UsersContractOrchestration(IContractManager contractManager)
+        public UsersContractOrchestration(IContractManager contractManager, IAccountContractOrchestration aco)
         {
             _ContractManager = contractManager;
+            _ACO = aco;
         }
 
         public void AddUser(User user)
         {
+            var newAccount = _ACO.CreateAccount();
+            user.Account = newAccount.Address;
+
             var accountAddress = _ContractManager.AdminAccount();
             var gas = new HexBigInteger(new BigInteger(400000));
             var value = new HexBigInteger(new BigInteger(0));
 
             var addUserFunction = _ContractManager
                 .GetAddUserFunction()
-                .SendTransactionAsync(accountAddress, gas, value, user.Name, user.Account);
+                .SendTransactionAsync(accountAddress, gas, value, user.Username, user.Account, user.Password);
             addUserFunction.Wait();
         }
 

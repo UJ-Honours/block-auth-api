@@ -1,11 +1,12 @@
 ﻿using block_auth_api.Orchestration.AccountContract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize]
     public class AccountsController : Controller
     {
         private readonly IAccountContractOrchestration _ACO;

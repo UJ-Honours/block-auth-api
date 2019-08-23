@@ -1,5 +1,4 @@
-﻿using block_auth_api.Connection;
-using block_auth_api.Models;
+﻿using block_auth_api.Models;
 using block_auth_api.Orchestration.UsersContract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

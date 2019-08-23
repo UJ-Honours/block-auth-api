@@ -20,38 +20,40 @@ namespace block_auth_api.Orchestration.TokenOrchestration
             _Config = config;
             _UCO = uco;
         }
-        public string BuildToken(UserVM user)
+
+        public string BuildToken(User user)
         {
             var claims = new[] {
-            new Claim(JwtRegisteredClaimNames.Sub,
-                      user.Account),
-            new Claim(
-                JwtRegisteredClaimNames.GivenName,
-                user.Name),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                new Claim(JwtRegisteredClaimNames.Sub,user.Account),
+                new Claim(JwtRegisteredClaimNames.GivenName,user.Username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var jwtKey = _Config["Jwt:Key"];
+            var issuer = _Config["Jwt:Issuer"];
+            var audience = _Config["Jwt:Audience"];
 
-            var token = new JwtSecurityToken(_Config["Jwt:Issuer"],
-                                             _Config["Jwt:Audience"],
+            var encodingBytes = Encoding.UTF8.GetBytes(jwtKey);
+            var key = new SymmetricSecurityKey(encodingBytes);
+            var securityAlgorithm = SecurityAlgorithms.HmacSha256;
+            var creds = new SigningCredentials(key, securityAlgorithm);
+
+            var token = new JwtSecurityToken(issuer,
+                                             audience,
                                              claims,
                                              expires: DateTime.Now.AddMinutes(30),
                                              signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler()
+                .WriteToken(token);
         }
 
-
-        public User Authenticate(UserVM login)
+        public User Authenticate(User user)
         {
             // TODO: This method will authenticate the user recovering his Ethereum address through underlaying offline ecrecover method.
-
             var userList = _UCO.GetUsers();
-
-            return userList.FirstOrDefault(x => x.Name == login.Name);
+            return userList
+                .FirstOrDefault(x => x.Username == user.Username);
         }
     }
 }

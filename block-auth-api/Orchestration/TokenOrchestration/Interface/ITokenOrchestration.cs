@@ -4,8 +4,8 @@ namespace block_auth_api.Orchestration.TokenOrchestration
 {
     public interface ITokenOrchestration
     {
-        string BuildToken(UserVM user);
+        string BuildToken(User user);
 
-        User Authenticate(UserVM login);
+        User Authenticate(User user);
     }
 }

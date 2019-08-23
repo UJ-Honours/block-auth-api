@@ -3,7 +3,6 @@ using block_auth_api.Orchestration.TokenOrchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace block_auth_api.Controllers
 {
@@ -21,7 +20,7 @@ namespace block_auth_api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("create_token")]
-        public ActionResult CreateToken([FromBody]UserVM login)
+        public ActionResult CreateToken([FromBody]User login)
         {
             try
             {
