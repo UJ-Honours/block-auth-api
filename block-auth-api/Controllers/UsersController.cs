@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]"),Authorize]
+    [Route("api/[controller]")]
     public class UsersController : Controller
     {
         private readonly IUsersContractOrchestration _UCO;
