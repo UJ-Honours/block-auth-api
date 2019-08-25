@@ -31,7 +31,8 @@ namespace block_auth_api.Controllers
                     if (user != null)
                     {
                         var tokenString = _TokenOrchestration.BuildToken(login);
-                        return Ok(new { token = tokenString });
+                        user.Token = tokenString;
+                        return Ok(user);
                     }
 
                     return Unauthorized();

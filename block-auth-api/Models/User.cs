@@ -16,5 +16,9 @@ namespace block_auth_api.Models
 
         [Parameter("string","role",4)]
         public string Role { get; set; }
+
+        [Parameter("string", "token", 5)]
+        public string Token { get; set; }
+
     }
 }

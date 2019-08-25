@@ -30,6 +30,9 @@ namespace block_auth_api
 
             InjectContracts(services);
 
+            services.AddSingleton<IDeviceContractManager, DeviceContractManager>();
+            services.AddSingleton<IUserContractManager, UserContractManager>();
+
             services.AddSingleton<IAccountContractOrchestration, AccountContractOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
@@ -42,7 +45,7 @@ namespace block_auth_api
                 .Get<DeviceContractOptions>();
             services.AddSingleton(deviceContract);
 
-            var userContract = Configuration.GetSection("Device")
+            var userContract = Configuration.GetSection("User")
                 .Get<UserContractOptions>();
             services.AddSingleton(userContract);
 

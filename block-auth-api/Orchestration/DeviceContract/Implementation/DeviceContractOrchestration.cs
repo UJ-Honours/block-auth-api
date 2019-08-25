@@ -1,7 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
 using block_auth_api.Orchestration.AccountContract;
-using Nethereum.Hex.HexTypes;
 using RestSharp;
 using System.Collections.Generic;
 using System.Numerics;
@@ -10,10 +9,10 @@ namespace block_auth_api.Orchestration.DeviceContract
 {
     public class DeviceContractOrchestration : IDeviceContractOrchestration
     {
-        private readonly IContractManager _ContractManager;
+        private readonly IDeviceContractManager _ContractManager;
         private readonly IAccountContractOrchestration _ACO;
 
-        public DeviceContractOrchestration(IContractManager contractManager, IAccountContractOrchestration aco)
+        public DeviceContractOrchestration(IDeviceContractManager contractManager, IAccountContractOrchestration aco)
         {
             _ContractManager = contractManager;
             _ACO = aco;

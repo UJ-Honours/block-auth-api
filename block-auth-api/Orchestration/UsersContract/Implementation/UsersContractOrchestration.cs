@@ -8,10 +8,10 @@ namespace block_auth_api.Orchestration.UsersContract
 {
     public class UsersContractOrchestration : IUsersContractOrchestration
     {
-        private readonly IContractManager _ContractManager;
+        private readonly IUserContractManager _ContractManager;
         private readonly IAccountContractOrchestration _ACO;
 
-        public UsersContractOrchestration(IContractManager contractManager, IAccountContractOrchestration aco)
+        public UsersContractOrchestration(IUserContractManager contractManager, IAccountContractOrchestration aco)
         {
             _ContractManager = contractManager;
             _ACO = aco;
