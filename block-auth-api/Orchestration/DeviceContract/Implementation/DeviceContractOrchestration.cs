@@ -1,6 +1,5 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
-using block_auth_api.Orchestration.AccountContract;
 using RestSharp;
 using System.Collections.Generic;
 using System.Numerics;
@@ -10,12 +9,10 @@ namespace block_auth_api.Orchestration.DeviceContract
     public class DeviceContractOrchestration : IDeviceContractOrchestration
     {
         private readonly IDeviceContractManager _ContractManager;
-        private readonly IAccountContractOrchestration _ACO;
 
-        public DeviceContractOrchestration(IDeviceContractManager contractManager, IAccountContractOrchestration aco)
+        public DeviceContractOrchestration(IDeviceContractManager contractManager)
         {
             _ContractManager = contractManager;
-            _ACO = aco;
         }
 
         public Device GetDevice(int index)
@@ -42,8 +39,6 @@ namespace block_auth_api.Orchestration.DeviceContract
             var accountAddress = _ContractManager.AdminAccount();
             var gas = _ContractManager.GetGasAmount();
             var value = _ContractManager.GetValueAmount();
-
-            var newAccount = _ACO.CreateAccount().Address;
 
             var loginFunction = _ContractManager
                 .GetAddDeviceFunction()
