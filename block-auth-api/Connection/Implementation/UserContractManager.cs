@@ -12,14 +12,14 @@ namespace block_auth_api.Connection
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
 
-        public UserContractManager(ResourceContractOptions rco)
+        public UserContractManager(UserContractOptions uco)
         {
-            var abi = JsonConvert.SerializeObject(rco.ABI).Replace('"', '\'');
-            var contractAddress = rco.Address;
-            var endpoint = rco.Endpoint;
+            var abi = JsonConvert.SerializeObject(uco.ABI).Replace('"', '\'');
+            var contractAddress = uco.Address;
+            var endpoint = uco.Endpoint;
             var web3 = new Web3(endpoint);
             _ResourceContract = web3.Eth.GetContract(abi, contractAddress);
-            _AdminAccount = rco.AdminAccount;
+            _AdminAccount = uco.AdminAccount;
         }
 
 
