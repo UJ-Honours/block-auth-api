@@ -1,6 +1,7 @@
 ﻿using block_auth_api.Models;
 using block_auth_api.Orchestration.UsersContract;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,37 +13,34 @@ namespace block_auth_api.Orchestration.TokenOrchestration
 {
     public class TokenOrchestration : ITokenOrchestration
     {
-        private readonly IConfiguration _Config;
+        private readonly JWTSettings _JWTSettings;
         private readonly IUsersContractOrchestration _UCO;
 
-        public TokenOrchestration(IConfiguration config, IUsersContractOrchestration uco)
+        public TokenOrchestration(IOptions<JWTSettings> jwtSettings, IUsersContractOrchestration uco)
         {
-            _Config = config;
+            _JWTSettings = jwtSettings.Value;
             _UCO = uco;
         }
 
         public string BuildToken(User user)
         {
-            var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Sub,user.Account),
-                new Claim(JwtRegisteredClaimNames.GivenName,user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_JWTSettings.SecretKey);
+            var signinCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, user.Username.ToString())
+                    }
+                ),
+                Expires = DateTime.UtcNow.AddHours(2),
+                SigningCredentials = signinCredentials
             };
 
-            var jwtKey = _Config["Jwt:Key"];
-            var issuer = _Config["Jwt:Issuer"];
-            var audience = _Config["Jwt:Audience"];
-
-            var encodingBytes = Encoding.UTF8.GetBytes(jwtKey);
-            var key = new SymmetricSecurityKey(encodingBytes);
-            var securityAlgorithm = SecurityAlgorithms.HmacSha256;
-            var creds = new SigningCredentials(key, securityAlgorithm);
-
-            var token = new JwtSecurityToken(issuer,
-                                             audience,
-                                             claims,
-                                             expires: DateTime.Now.AddMinutes(30),
-                                             signingCredentials: creds);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return new JwtSecurityTokenHandler()
                 .WriteToken(token);
@@ -52,8 +50,10 @@ namespace block_auth_api.Orchestration.TokenOrchestration
         {
             // TODO: This method will authenticate the user recovering his Ethereum address through underlaying offline ecrecover method.
             var userList = _UCO.GetUsers();
-            return userList
-                .FirstOrDefault(x => x.Username == user.Username);
+            var validUser = userList
+                .FirstOrDefault(x => (x.Username == user.Username) && (x.Password == user.Password));
+            validUser.Password = "";
+            return validUser;
         }
     }
 }

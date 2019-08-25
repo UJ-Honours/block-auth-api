@@ -18,7 +18,7 @@ namespace block_auth_api.Controllers
         }
 
         [HttpGet]
-        [Route("devices")]
+        [Route("get_devices")]
         public ActionResult GetDevices()
         {
             try
@@ -33,8 +33,8 @@ namespace block_auth_api.Controllers
         }
 
         [HttpGet]
-        [Route("device/{url}")]
-        public ActionResult GetDevice(string url = "http://192.168.8.186:8081")
+        [Route("get_device/{url}")]
+        public ActionResult GetDevice([FromQuery] string url)
         {
             try
             {
@@ -49,11 +49,11 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("devices_trigger_event")]
-        public ActionResult TriggerEvent()
+        public ActionResult TriggerEvent([FromBody] User user)
         {
             try
             {
-                _DCO.TriggerEvent();
+                _DCO.TriggerEvent(user.Account);
 
                 return Ok();
             }
@@ -80,8 +80,8 @@ namespace block_auth_api.Controllers
         }
 
         [HttpPost]
-        [Route("devices_auth/{url}")]
-        public ActionResult DeviceAuth(string url = "http://192.168.8.186:8081")
+        [Route("devices_auth/")]
+        public ActionResult DeviceAuth([FromBody] string url)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("devices_connect/{url}")]
-        public ActionResult AccessDevice([FromBody] LoggedIn loggedIn, string url = "http://192.168.8.186:8081")
+        public ActionResult AccessDevice([FromBody] LoggedIn loggedIn, string url)
         {
             try
             {
@@ -114,5 +114,6 @@ namespace block_auth_api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

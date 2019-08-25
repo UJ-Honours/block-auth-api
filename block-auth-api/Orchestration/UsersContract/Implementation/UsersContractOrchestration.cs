@@ -1,7 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
 using block_auth_api.Orchestration.AccountContract;
-using Nethereum.Hex.HexTypes;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -24,8 +23,8 @@ namespace block_auth_api.Orchestration.UsersContract
             user.Account = newAccount.Address;
 
             var accountAddress = _ContractManager.AdminAccount();
-            var gas = new HexBigInteger(new BigInteger(400000));
-            var value = new HexBigInteger(new BigInteger(0));
+            var gas = _ContractManager.GetGasAmount();
+            var value = _ContractManager.GetValueAmount();
 
             var addUserFunction = _ContractManager
                 .GetAddUserFunction()

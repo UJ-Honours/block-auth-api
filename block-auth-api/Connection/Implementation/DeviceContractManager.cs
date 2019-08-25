@@ -1,16 +1,18 @@
 ﻿using block_auth_api.Models;
 using Nethereum.Contracts;
+using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Newtonsoft.Json;
+using System.Numerics;
 
 namespace block_auth_api.Connection
 {
-    public class ContractManager : IContractManager
+    public class DeviceContractManager : IDeviceContractManager
     {
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
 
-        public ContractManager(ResourceContractOptions rco)
+        public DeviceContractManager(ResourceContractOptions rco)
         {
             var abi = JsonConvert.SerializeObject(rco.ABI).Replace('"', '\'');
             var contractAddress = rco.Address;
@@ -25,21 +27,7 @@ namespace block_auth_api.Connection
             return _ResourceContract.GetFunction("login_admin");
         }
 
-        public Function GetAddUserFunction()
-        {
-            return _ResourceContract.GetFunction("addUser");
-        }
-        
-        public Function GetUsersFunction()
-        {
-            return _ResourceContract.GetFunction("users");
-        }
-
-        public Function GetUserCountFunction()
-        {
-            return _ResourceContract.GetFunction("userCount");
-        }
-
+       
         public Function GetDeviceCountFunction()
         {
             return _ResourceContract.GetFunction("deviceCount");
@@ -50,23 +38,24 @@ namespace block_auth_api.Connection
             return _ResourceContract.GetFunction("devices");
         }
 
-        public Function GetDocumentsFunction()
-        {
-            return _ResourceContract.GetFunction("documents");
-        }
-
-        public Function GetStoreDocumentFunction()
-        {
-            return _ResourceContract.GetFunction("StoreDocument");
-        }
-
         public Function GetAddDeviceFunction()
         {
             return _ResourceContract.GetFunction("addDevice");
         }
 
-        public string AdminAccount() {
+        public string AdminAccount()
+        {
             return _AdminAccount;
+        }
+
+        public HexBigInteger GetGasAmount()
+        {
+            return new HexBigInteger(new BigInteger(400000));
+        }
+
+        public HexBigInteger GetValueAmount()
+        {
+            return new HexBigInteger(new BigInteger(0));
         }
     }
 }

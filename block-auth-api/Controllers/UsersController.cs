@@ -3,11 +3,12 @@ using block_auth_api.Orchestration.UsersContract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]"), Authorize]
+    [Route("api/[controller]"),Authorize]
     public class UsersController : Controller
     {
         private readonly IUsersContractOrchestration _UCO;
@@ -18,14 +19,19 @@ namespace block_auth_api.Controllers
         }
 
         [HttpGet]
-        [Route("users")]
+        [Route("get_users")]
         public ActionResult GetUsers()
         {
             try
             {
                 var userList = _UCO.GetUsers();
-
-                return Ok(userList);
+                var usersDictionary = new Dictionary<string, List<User>>();
+                foreach (User u in userList)
+                {
+                    u.Password = "";
+                };
+                usersDictionary.Add("users", userList);
+                return Ok(usersDictionary);
             }
             catch (Exception ex)
             {
