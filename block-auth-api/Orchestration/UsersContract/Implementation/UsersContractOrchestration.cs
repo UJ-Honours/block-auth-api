@@ -2,6 +2,7 @@
 using block_auth_api.Models;
 using block_auth_api.Orchestration.AccountContract;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace block_auth_api.Orchestration.UsersContract
@@ -21,15 +22,23 @@ namespace block_auth_api.Orchestration.UsersContract
         {
             var newAccount = _ACO.CreateAccount();
             user.Account = newAccount.Address;
+            user.Role = "user";
 
-            var accountAddress = _ContractManager.AdminAccount();
-            var gas = _ContractManager.GetGasAmount();
-            var value = _ContractManager.GetValueAmount();
+            var users = GetUsers();
 
-            var addUserFunction = _ContractManager
-                .GetAddUserFunction()
-                .SendTransactionAsync(accountAddress, gas, value, user.Username, user.Account, user.Password);
-            addUserFunction.Wait();
+            var userResult = users.FirstOrDefault(x => x.Username == user.Username);
+
+            if (userResult == null)
+            {
+                var accountAddress = _ContractManager.AdminAccount();
+                var gas = _ContractManager.GetGasAmount();
+                var value = _ContractManager.GetValueAmount();
+
+                var addUserFunction = _ContractManager
+                    .GetAddUserFunction()
+                    .SendTransactionAsync(accountAddress, gas, value, user.Username, user.Account, user.Password, user.Role);
+                addUserFunction.Wait();
+            }
         }
 
         public User GetUser(int index)

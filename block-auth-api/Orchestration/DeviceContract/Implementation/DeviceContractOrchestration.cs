@@ -44,11 +44,10 @@ namespace block_auth_api.Orchestration.DeviceContract
             var value = _ContractManager.GetValueAmount();
 
             var newAccount = _ACO.CreateAccount().Address;
-            device.Account = newAccount;
 
             var loginFunction = _ContractManager
                 .GetAddDeviceFunction()
-                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Ip, device.Account);
+                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Ip);
             loginFunction.Wait();
         }
 

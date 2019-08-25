@@ -11,7 +11,5 @@ namespace block_auth_api.Models
         [Parameter("string", "ip", 2)]
         public string Ip { get; set; }
 
-        [Parameter("address", "account", 3)]
-        public string Account { get; set; }
     }
 }
