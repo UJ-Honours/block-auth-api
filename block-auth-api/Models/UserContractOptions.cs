@@ -3,7 +3,7 @@ using VotingSystemAPI.Models;
 
 namespace block_auth_api.Models
 {
-    public class ResourceContractOptions
+    public class UserContractOptions
     {
         public string Endpoint { get; set; }
 

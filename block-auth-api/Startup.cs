@@ -27,7 +27,8 @@ namespace block_auth_api
 
         private void InjectOrchestration(IServiceCollection services)
         {
-            services.AddSingleton<IContractManager, ContractManager>();
+
+            InjectContracts(services);
 
             services.AddSingleton<IAccountContractOrchestration, AccountContractOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
@@ -35,13 +36,62 @@ namespace block_auth_api
             services.AddSingleton<ITokenOrchestration, TokenOrchestration>();
         }
 
+        private void InjectContracts(IServiceCollection services)
+        {
+            var deviceContract = Configuration.GetSection("Device")
+                .Get<DeviceContractOptions>();
+            services.AddSingleton(deviceContract);
+
+            var userContract = Configuration.GetSection("Device")
+                .Get<UserContractOptions>();
+            services.AddSingleton(userContract);
+
+        }
+
+        private void InjectJWT(IServiceCollection services)
+        {
+            var appSettingsSection = Configuration.GetSection("JWTSettings");
+            services.Configure<JWTSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<JWTSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
+
+            var tokenParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = tokenParameters;
+            });
+        }
+
+        private void InjectCors(IServiceCollection services)
+        {
+            services.AddCors(options1 =>
+            {
+                options1.AddPolicy("MyCorsPolicy", builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader());
+            });
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             InjectOrchestration(services);
-            var contract = Configuration.GetSection("Contract")
-                .Get<ResourceContractOptions>();
-            services.AddSingleton(contract);
 
             services.AddSwaggerGen(c =>
             {
@@ -52,31 +102,9 @@ namespace block_auth_api
             var MVC_VERSION = CompatibilityVersion.Version_2_2;
             services.AddMvc().SetCompatibilityVersion(MVC_VERSION);
 
-            services.AddCors(options1 =>
-            {
-                options1.AddPolicy("MyCorsPolicy", builder => builder
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader());
-                //.WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
-            });
+            InjectCors(services);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = Configuration["Jwt:Issuer"],
-            ValidAudience = Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-        };
-    });
-
+            InjectJWT(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

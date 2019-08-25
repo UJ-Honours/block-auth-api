@@ -1,5 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
+using block_auth_api.Orchestration.AccountContract;
 using Nethereum.Hex.HexTypes;
 using RestSharp;
 using System.Collections.Generic;
@@ -10,10 +11,12 @@ namespace block_auth_api.Orchestration.DeviceContract
     public class DeviceContractOrchestration : IDeviceContractOrchestration
     {
         private readonly IContractManager _ContractManager;
+        private readonly IAccountContractOrchestration _ACO;
 
-        public DeviceContractOrchestration(IContractManager contractManager)
+        public DeviceContractOrchestration(IContractManager contractManager, IAccountContractOrchestration aco)
         {
             _ContractManager = contractManager;
+            _ACO = aco;
         }
 
         public Device GetDevice(int index)
@@ -35,23 +38,14 @@ namespace block_auth_api.Orchestration.DeviceContract
             return deviceCount;
         }
 
-        public void TriggerEvent(string device)
-        {
-            var accountAddress = _ContractManager.AdminAccount();
-            var gas = new HexBigInteger(new BigInteger(400000));
-            var value = new HexBigInteger(new BigInteger(0));
-
-            var loginFunction = _ContractManager
-                .GetLoginAdminFunction()
-                .SendTransactionAsync(accountAddress, gas, value,device);
-            loginFunction.Wait();
-        }
-
         public void AddDevice(Device device)
         {
             var accountAddress = _ContractManager.AdminAccount();
-            var gas = new HexBigInteger(new BigInteger(400000));
-            var value = new HexBigInteger(new BigInteger(0));
+            var gas = _ContractManager.GetGasAmount();
+            var value = _ContractManager.GetValueAmount();
+
+            var newAccount = _ACO.CreateAccount().Address;
+            device.Account = newAccount;
 
             var loginFunction = _ContractManager
                 .GetAddDeviceFunction()
@@ -76,11 +70,11 @@ namespace block_auth_api.Orchestration.DeviceContract
             return deviceDictionary;
         }
 
-        public void TriggerEvent()
+        public void TriggerEvent(string account)
         {
-            var accountAddress = _ContractManager.AdminAccount();
-            var gas = new HexBigInteger(new BigInteger(400000));
-            var value = new HexBigInteger(new BigInteger(0));
+            var accountAddress = account;
+            var gas = _ContractManager.GetGasAmount();
+            var value = _ContractManager.GetValueAmount();
 
             var loginFunction = _ContractManager
                 .GetLoginAdminFunction()
@@ -90,41 +84,41 @@ namespace block_auth_api.Orchestration.DeviceContract
 
         public LoggedIn DeviceAuth(string url)
         {
-            var requestB = new RestRequest()
+            var request = new RestRequest()
             {
                 Method = Method.POST,
                 Resource = "/auth_data"
             };
             var client = new RestClient(url);
-            var responseB = client.Post<LoggedIn>(requestB);
+            var response = client.Post<LoggedIn>(request);
 
-            return responseB.Data;
+            return response.Data;
         }
 
-        public string AccessDevice(LoggedIn loggedIn,string url)
+        public string AccessDevice(LoggedIn loggedIn, string url)
         {
-            var requestC = new RestRequest()
+            var request = new RestRequest()
             {
                 Method = Method.POST,
                 Resource = "/connect"
             };
             var client = new RestClient(url);
-            requestC.AddParameter("message", $"{loggedIn.Token}");
-            var responseC = client.Execute(requestC);
+            request.AddParameter("message", $"{loggedIn.Token}");
+            var response = client.Execute(request);
 
-            return responseC.Content;
+            return response.Content;
         }
 
         public string GetDevice(string url)
         {
-            var requestA = new RestRequest()
+            var request = new RestRequest()
             {
                 Method = Method.GET,
                 Resource = "/"
             };
             var client = new RestClient(url);
-            var responseA = client.Execute(requestA);
-            return responseA.Content;
+            var response = client.Execute(request);
+            return response.Content;
         }
     }
 }

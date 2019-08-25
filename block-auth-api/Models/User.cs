@@ -11,10 +11,10 @@ namespace block_auth_api.Models
         [Parameter("address", "account", 2)]
         public string Account { get; set; }
 
-        [Parameter("address", "password", 3)]
+        [Parameter("string", "password", 3)]
         public string Password { get; set; }
 
-        [Parameter("string", "token", 4)]
-        public string Token { get; set; }
+        [Parameter("string","role",4)]
+        public string Role { get; set; }
     }
 }
