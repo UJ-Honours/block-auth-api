@@ -1,6 +1,5 @@
 ﻿using block_auth_api.Models;
 using block_auth_api.Orchestration.UsersContract;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
