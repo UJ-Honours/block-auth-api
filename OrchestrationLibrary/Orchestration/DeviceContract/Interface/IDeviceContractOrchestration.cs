@@ -11,13 +11,15 @@ namespace block_auth_api.Orchestration.DeviceContract
 
         Dictionary<string, List<Device>> GetDevices();
 
-        void TriggerEvent(string account);
+        void TriggerEvent();
 
         void AddDevice(Device device);
 
-        LoggedIn DeviceAuth(string url);
+        void RemoveDevice(Device device);
 
-        string AccessDevice(LoggedIn loggedIn, string url);
+        LoggedIn DeviceAuth(LoggedIn loggedIn);
+
+        string AccessDevice(LoggedIn loggedIn);
 
         string GetDevice(string url);
     }

@@ -46,6 +46,19 @@ namespace block_auth_api.Orchestration.DeviceContract
             loginFunction.Wait();
         }
 
+        public void RemoveDevice(Device device)
+        {
+            var accountAddress = _ContractManager.AdminAccount();
+            var gas = _ContractManager.GetGasAmount();
+            var value = _ContractManager.GetValueAmount();
+
+            var loginFunction = _ContractManager
+                .GetAddDeviceFunction()
+                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Ip);
+            loginFunction.Wait();
+        }
+
+
         public Dictionary<string, List<Device>> GetDevices()
         {
             var deviceDictionary = new Dictionary<string, List<Device>>();
@@ -63,9 +76,9 @@ namespace block_auth_api.Orchestration.DeviceContract
             return deviceDictionary;
         }
 
-        public void TriggerEvent(string account)
+        public void TriggerEvent()
         {
-            var accountAddress = account;
+            var accountAddress = _ContractManager.AdminAccount();
             var gas = _ContractManager.GetGasAmount();
             var value = _ContractManager.GetValueAmount();
 
@@ -75,27 +88,27 @@ namespace block_auth_api.Orchestration.DeviceContract
             loginFunction.Wait();
         }
 
-        public LoggedIn DeviceAuth(string url)
+        public LoggedIn DeviceAuth(LoggedIn loggedIn)
         {
             var request = new RestRequest()
             {
                 Method = Method.POST,
                 Resource = "/auth_data"
             };
-            var client = new RestClient(url);
+            var client = new RestClient($"http://{loggedIn.Ip}");
             var response = client.Post<LoggedIn>(request);
 
             return response.Data;
         }
 
-        public string AccessDevice(LoggedIn loggedIn, string url)
+        public string AccessDevice(LoggedIn loggedIn)
         {
             var request = new RestRequest()
             {
                 Method = Method.POST,
                 Resource = "/connect"
             };
-            var client = new RestClient(url);
+            var client = new RestClient($"http://{loggedIn.Ip}");
             request.AddParameter("message", $"{loggedIn.Token}");
             var response = client.Execute(request);
 
@@ -109,7 +122,7 @@ namespace block_auth_api.Orchestration.DeviceContract
                 Method = Method.GET,
                 Resource = "/"
             };
-            var client = new RestClient(url);
+            var client = new RestClient($"http://{url}");
             var response = client.Execute(request);
             return response.Content;
         }

@@ -7,8 +7,8 @@ namespace block_auth_api.Models
         [JsonProperty("sender")]
         public string Sender { get; set; }
 
-        [JsonProperty("device")]
-        public string Device { get; set; }
+        [JsonProperty("ip")]
+        public string Ip { get; set; }
 
         [JsonProperty("token")]
         public string Token { get; set; }

@@ -34,7 +34,7 @@ namespace block_auth_api.Controllers
 
         [HttpGet]
         [Route("get_device/{url}")]
-        public ActionResult GetDevice([FromQuery] string url)
+        public ActionResult GetDevice(string url)
         {
             try
             {
@@ -49,11 +49,11 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("devices_trigger_event")]
-        public ActionResult TriggerEvent([FromBody] User user)
+        public ActionResult TriggerEvent([FromBody] LoggedIn loggedIn)
         {
             try
             {
-                _DCO.TriggerEvent(user.Account);
+                _DCO.TriggerEvent();
 
                 return Ok();
             }
@@ -79,13 +79,29 @@ namespace block_auth_api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("devices_auth/")]
-        public ActionResult DeviceAuth([FromBody] string url)
+        [HttpDelete]
+        [Route("remove_device")]
+        public ActionResult RemoveDevice([FromBody] Device device)
         {
             try
             {
-                var result = _DCO.DeviceAuth(url);
+                _DCO.AddDevice(device);
+
+                return Ok(device);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("devices_auth/")]
+        public ActionResult DeviceAuth([FromBody] LoggedIn loggedIn)
+        {
+            try
+            {
+                var result = _DCO.DeviceAuth(loggedIn);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -96,7 +112,7 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("devices_connect/{url}")]
-        public ActionResult AccessDevice([FromBody] LoggedIn loggedIn, string url)
+        public ActionResult AccessDevice([FromBody] LoggedIn loggedIn)
         {
             try
             {
@@ -105,7 +121,7 @@ namespace block_auth_api.Controllers
                     return BadRequest();
                 }
 
-                var result = _DCO.AccessDevice(loggedIn, url);
+                var result = _DCO.AccessDevice(loggedIn);
 
                 return Ok(result);
             }
