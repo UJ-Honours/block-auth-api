@@ -11,7 +11,7 @@ namespace block_auth_api.Orchestration.DeviceContract
 
         Dictionary<string, List<Device>> GetDevices();
 
-        void TriggerEvent();
+        void TriggerEvent(LoggedIn loggedIn);
 
         void AddDevice(Device device);
 

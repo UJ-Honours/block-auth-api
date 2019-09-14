@@ -20,8 +20,8 @@ namespace block_auth_api.Orchestration.UsersContract
 
         public void AddUser(User user)
         {
-            var newAccount = _ACO.CreateAccount();
-            user.Account = newAccount.Address;
+            var newAccount = "0x4cc7d1aee9c76466b0787939c6355281de01a111";
+            user.Account = newAccount;
             user.Role = "user";
 
             var users = GetUsers();

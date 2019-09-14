@@ -58,7 +58,6 @@ namespace block_auth_api.Orchestration.DeviceContract
             loginFunction.Wait();
         }
 
-
         public Dictionary<string, List<Device>> GetDevices()
         {
             var deviceDictionary = new Dictionary<string, List<Device>>();
@@ -76,15 +75,15 @@ namespace block_auth_api.Orchestration.DeviceContract
             return deviceDictionary;
         }
 
-        public void TriggerEvent()
+        public void TriggerEvent(LoggedIn loggedIn)
         {
-            var accountAddress = _ContractManager.AdminAccount();
+            var accountAddress = loggedIn.Sender;
             var gas = _ContractManager.GetGasAmount();
             var value = _ContractManager.GetValueAmount();
 
             var loginFunction = _ContractManager
                 .GetLoginAdminFunction()
-                .SendTransactionAsync(accountAddress, gas, value);
+                .SendTransactionAsync(accountAddress, gas, value, loggedIn.Ip);
             loginFunction.Wait();
         }
 
@@ -109,7 +108,7 @@ namespace block_auth_api.Orchestration.DeviceContract
                 Resource = "/connect"
             };
             var client = new RestClient($"http://{loggedIn.Ip}");
-            request.AddParameter("message", $"{loggedIn.Token}");
+            request.AddParameter("message", $"{loggedIn.Token},{loggedIn.Ip},{loggedIn.Sender}");
             var response = client.Execute(request);
 
             return response.Content;

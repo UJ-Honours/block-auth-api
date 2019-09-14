@@ -53,7 +53,7 @@ namespace block_auth_api.Controllers
         {
             try
             {
-                _DCO.TriggerEvent();
+                _DCO.TriggerEvent(loggedIn);
 
                 return Ok();
             }
@@ -111,7 +111,7 @@ namespace block_auth_api.Controllers
         }
 
         [HttpPost]
-        [Route("devices_connect/{url}")]
+        [Route("devices_connect/")]
         public ActionResult AccessDevice([FromBody] LoggedIn loggedIn)
         {
             try
