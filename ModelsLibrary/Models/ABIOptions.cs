@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VotingSystemAPI.Models
+namespace block_auth_api.Models
 {
     public class ABIOptions
     {

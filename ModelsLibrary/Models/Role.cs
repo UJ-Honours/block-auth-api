@@ -3,7 +3,7 @@
 namespace block_auth_api.Models
 {
     [FunctionOutput]
-    public class Device
+    public class Role
     {
         [Parameter("uint", "id", 1)]
         public int Id { get; set; }
@@ -11,8 +11,8 @@ namespace block_auth_api.Models
         [Parameter("string", "name", 2)]
         public string Name { get; set; }
 
-        [Parameter("string", "ip", 3)]
-        public string Ip { get; set; }
+        [Parameter("string", "permission", 3)]
+        public string Permission { get; set; }
 
     }
 }

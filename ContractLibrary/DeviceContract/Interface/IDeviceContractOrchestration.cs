@@ -1,7 +1,7 @@
 ﻿using block_auth_api.Models;
 using System.Collections.Generic;
 
-namespace block_auth_api.Orchestration.DeviceContract
+namespace block_auth_api.Orchestration
 {
     public interface IDeviceContractOrchestration
     {
@@ -22,5 +22,9 @@ namespace block_auth_api.Orchestration.DeviceContract
         string AccessDevice(LoggedIn loggedIn);
 
         string GetDevice(string url);
+
+        string TurnDeviceOn(Device device);
+
+        string TurnDeviceOff(Device device);
     }
 }

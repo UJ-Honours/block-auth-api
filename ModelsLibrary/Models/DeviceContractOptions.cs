@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using VotingSystemAPI.Models;
 
 namespace block_auth_api.Models
 {
@@ -13,6 +12,5 @@ namespace block_auth_api.Models
 
         public string AdminAccount { get; set; }
 
-        public string ConnectionString { get; set; }
     }
 }

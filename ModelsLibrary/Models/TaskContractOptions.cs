@@ -2,7 +2,7 @@
 
 namespace block_auth_api.Models
 {
-    public class UserContractOptions
+    public class TaskContractOptions
     {
         public string Endpoint { get; set; }
 

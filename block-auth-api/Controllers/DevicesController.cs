@@ -1,5 +1,5 @@
 ﻿using block_auth_api.Models;
-using block_auth_api.Orchestration.DeviceContract;
+using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -53,6 +53,11 @@ namespace block_auth_api.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
                 _DCO.TriggerEvent(loggedIn);
 
                 return Ok();
@@ -69,6 +74,11 @@ namespace block_auth_api.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
                 _DCO.AddDevice(device);
 
                 return Ok(device);
@@ -85,6 +95,11 @@ namespace block_auth_api.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
                 _DCO.AddDevice(device);
 
                 return Ok(device);
@@ -101,6 +116,11 @@ namespace block_auth_api.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
                 var result = _DCO.DeviceAuth(loggedIn);
                 return Ok(result);
             }
@@ -118,7 +138,7 @@ namespace block_auth_api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest();
+                    return BadRequest("Invalid Model Passed");
                 }
 
                 var result = _DCO.AccessDevice(loggedIn);
@@ -131,5 +151,44 @@ namespace block_auth_api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("turn_device_on/")]
+        public ActionResult TurnDeviceOn([FromBody] Device device)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
+                var result = _DCO.TurnDeviceOn(device);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("turn_device_off/")]
+        public ActionResult TurnDeviceOff([FromBody] Device device)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
+                var result = _DCO.TurnDeviceOff(device);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

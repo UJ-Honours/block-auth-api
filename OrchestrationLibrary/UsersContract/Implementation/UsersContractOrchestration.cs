@@ -1,28 +1,25 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
-using block_auth_api.Orchestration.AccountContract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-namespace block_auth_api.Orchestration.UsersContract
+namespace block_auth_api.Orchestration
 {
     public class UsersContractOrchestration : IUsersContractOrchestration
     {
         private readonly IUserContractManager _ContractManager;
-        private readonly IAccountContractOrchestration _ACO;
 
-        public UsersContractOrchestration(IUserContractManager contractManager, IAccountContractOrchestration aco)
+        public UsersContractOrchestration(IUserContractManager contractManager)
         {
             _ContractManager = contractManager;
-            _ACO = aco;
         }
 
         public void AddUser(User user)
         {
             var newAccount = "0x4cc7d1aee9c76466b0787939c6355281de01a111";
             user.Account = newAccount;
-            user.Role = "user";
+            //user.Role = "guest";
 
             var users = GetUsers();
 
@@ -45,7 +42,7 @@ namespace block_auth_api.Orchestration.UsersContract
         {
             var result = _ContractManager
                     .GetUsersFunction()
-                    .CallDeserializingToObjectAsync<User>(1, index);
+                    .CallDeserializingToObjectAsync<User>(index);
             result.Wait();
             return result.Result;
         }
@@ -66,7 +63,7 @@ namespace block_auth_api.Orchestration.UsersContract
 
             var userCount = GetUserCount();
 
-            for (int i = 0; i < userCount; i++)
+            for (int i = 1; i <= userCount; i++)
             {
                 var user = GetUser(i);
                 userList.Add(user);

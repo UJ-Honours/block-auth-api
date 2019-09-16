@@ -12,5 +12,6 @@ namespace block_auth_api.Models
 
         [JsonProperty("token")]
         public string Token { get; set; }
+
     }
 }

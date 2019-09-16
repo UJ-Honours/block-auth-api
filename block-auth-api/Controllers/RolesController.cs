@@ -3,35 +3,28 @@ using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class UsersController : Controller
+    public class RolesController : Controller
     {
-        private readonly IUsersContractOrchestration _UCO;
+        private readonly IRoleOrchestration _RO;
 
-        public UsersController(IUsersContractOrchestration uco)
+        public RolesController(IRoleOrchestration ro)
         {
-            _UCO = uco;
+            _RO = ro;
         }
 
         [HttpGet]
-        [Route("get_users")]
-        public ActionResult GetUsers()
+        [Route("get_roles")]
+        public ActionResult GetDevices()
         {
             try
             {
-                var userList = _UCO.GetUsers();
-                var usersDictionary = new Dictionary<string, List<User>>();
-                foreach (var u in userList)
-                {
-                    u.Password = "";
-                };
-                usersDictionary.Add("users", userList);
-                return Ok(usersDictionary);
+                var roleDictionary = _RO.GetRoles();
+                return Ok(roleDictionary);
             }
             catch (Exception ex)
             {
@@ -40,8 +33,8 @@ namespace block_auth_api.Controllers
         }
 
         [HttpPost]
-        [Route("add_user")]
-        public ActionResult AddUser([FromBody] User user)
+        [Route("update_role_permissions")]
+        public ActionResult UpdateRolePermissions()
         {
             try
             {
@@ -50,9 +43,9 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                _UCO.AddUser(user);
+                _RO.CreateRole("owner");
 
-                return Ok(user);
+                return Ok();
             }
             catch (Exception ex)
             {

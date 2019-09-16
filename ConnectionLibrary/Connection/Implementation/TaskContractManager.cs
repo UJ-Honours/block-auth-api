@@ -7,40 +7,40 @@ using System.Numerics;
 
 namespace block_auth_api.Connection
 {
-    public class DeviceContractManager : IDeviceContractManager
+    public class TaskContractManager : ITaskContractManager
     {
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
-
-        public DeviceContractManager(DeviceContractOptions dco)
+        public TaskContractManager(TaskContractOptions tco)
         {
-            var abi = JsonConvert.SerializeObject(dco.ABI).Replace('"', '\'');
-            var contractAddress = dco.Address;
-            var endpoint = dco.Endpoint;
+            var abi = JsonConvert.SerializeObject(tco.ABI).Replace('"', '\'');
+            var contractAddress = tco.Address;
+            var endpoint = tco.Endpoint;
             var web3 = new Web3(endpoint);
             _ResourceContract = web3.Eth.GetContract(abi, contractAddress);
-            _AdminAccount = dco.AdminAccount;
+            _AdminAccount = tco.AdminAccount;
         }
 
-        public Function GetLoginAdminFunction()
+        public Function GetCreateTaskFunction()
         {
-            return _ResourceContract.GetFunction("login_admin");
+            return _ResourceContract.GetFunction("createTask");
         }
 
-        public Function GetDeviceCountFunction()
+        public Function GetTaskCountFunction()
         {
-            return _ResourceContract.GetFunction("deviceCount");
+            return _ResourceContract.GetFunction("taskCount");
         }
 
-        public Function GetDevicesFunction()
+        public Function GetTasksFunction()
         {
-            return _ResourceContract.GetFunction("devices");
+            return _ResourceContract.GetFunction("tasks");
         }
 
-        public Function GetAddDeviceFunction()
+        public Function GetToggleTaskFunction()
         {
-            return _ResourceContract.GetFunction("addDevice");
+            return _ResourceContract.GetFunction("toggleCompleted");
         }
+
 
         public string AdminAccount()
         {

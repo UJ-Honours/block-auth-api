@@ -1,4 +1,4 @@
-﻿namespace VotingSystemAPI.Models
+﻿namespace block_auth_api.Models
 {
     public class ABIInputs
     {

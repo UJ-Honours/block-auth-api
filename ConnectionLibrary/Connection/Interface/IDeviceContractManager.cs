@@ -9,12 +9,9 @@ namespace block_auth_api.Connection
 
         Function GetLoginAdminFunction();
 
-
         Function GetAddDeviceFunction();
 
-
         Function GetDevicesFunction();
-
 
         Function GetDeviceCountFunction();
 

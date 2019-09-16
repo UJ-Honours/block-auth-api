@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "block-auth-api", "block-auth-api\block-auth-api.csproj", "{E1B37FFB-305D-478F-BC4F-3790872A4142}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestrationLibrary", "OrchestrationLibrary\OrchestrationLibrary.csproj", "{7107BD6E-47D1-4AA6-811C-E456284E85CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationLibrary", "OrchestrationLibrary\OrchestrationLibrary.csproj", "{7107BD6E-47D1-4AA6-811C-E456284E85CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsLibrary", "ModelsLibrary\ModelsLibrary.csproj", "{74739CFA-641E-4D91-8C7C-EB19E807B621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsLibrary", "ModelsLibrary\ModelsLibrary.csproj", "{74739CFA-641E-4D91-8C7C-EB19E807B621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionLibrary", "ConnectionLibrary\ConnectionLibrary.csproj", "{EA0D82F2-04A1-4FBF-8933-D6F6493E431C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionLibrary", "ConnectionLibrary\ConnectionLibrary.csproj", "{EA0D82F2-04A1-4FBF-8933-D6F6493E431C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,19 +5,22 @@ namespace block_auth_api.Models
     [FunctionOutput]
     public class User
     {
-        [Parameter("string", "username", 1)]
+        [Parameter("uint", "id", 1)]
+        public int Id { get; set; }
+
+        [Parameter("string", "username", 2)]
         public string Username { get; set; }
 
-        [Parameter("address", "account", 2)]
+        [Parameter("address", "account", 3)]
         public string Account { get; set; }
 
-        [Parameter("string", "password", 3)]
+        [Parameter("string", "password", 4)]
         public string Password { get; set; }
 
-        [Parameter("string","role",4)]
+        [Parameter("string", "role", 5)]
         public string Role { get; set; }
 
-        [Parameter("string", "token", 5)]
+        [Parameter("string", "token", 6)]
         public string Token { get; set; }
 
     }

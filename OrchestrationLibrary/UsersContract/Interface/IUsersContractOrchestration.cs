@@ -1,7 +1,7 @@
 ﻿using block_auth_api.Models;
 using System.Collections.Generic;
 
-namespace block_auth_api.Orchestration.UsersContract
+namespace block_auth_api.Orchestration
 {
     public interface IUsersContractOrchestration
     {

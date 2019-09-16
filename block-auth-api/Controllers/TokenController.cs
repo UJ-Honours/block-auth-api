@@ -1,5 +1,5 @@
 ﻿using block_auth_api.Models;
-using block_auth_api.Orchestration.TokenOrchestration;
+using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,23 +24,18 @@ namespace block_auth_api.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var user = _TokenOrchestration.Authenticate(login);
-
-                    if (user != null)
-                    {
-                        var tokenString = _TokenOrchestration.BuildToken(login);
-                        user.Token = tokenString;
-                        return Ok(user);
-                    }
-
-                    return Unauthorized();
-                }
-                else
+                if (!ModelState.IsValid)
                 {
                     return BadRequest("Invalid Model Passed");
                 }
+                var user = _TokenOrchestration.Authenticate(login);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+                var tokenString = _TokenOrchestration.BuildToken(login);
+                user.Token = tokenString;
+                return Ok(user);
             }
             catch (Exception ex)
             {

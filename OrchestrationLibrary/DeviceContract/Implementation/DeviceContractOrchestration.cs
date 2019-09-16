@@ -4,7 +4,7 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace block_auth_api.Orchestration.DeviceContract
+namespace block_auth_api.Orchestration
 {
     public class DeviceContractOrchestration : IDeviceContractOrchestration
     {
@@ -19,7 +19,7 @@ namespace block_auth_api.Orchestration.DeviceContract
         {
             var result = _ContractManager
                     .GetDevicesFunction()
-                    .CallDeserializingToObjectAsync<Device>(1, index);
+                    .CallDeserializingToObjectAsync<Device>(index);
             result.Wait();
             return result.Result;
         }
@@ -65,7 +65,7 @@ namespace block_auth_api.Orchestration.DeviceContract
 
             var deviceCount = GetDeviceCount();
 
-            for (int i = 0; i < deviceCount; i++)
+            for (int i = 1; i <= deviceCount; i++)
             {
                 var device = GetDevice(i);
                 deviceList.Add(device);
@@ -108,7 +108,8 @@ namespace block_auth_api.Orchestration.DeviceContract
                 Resource = "/connect"
             };
             var client = new RestClient($"http://{loggedIn.Ip}");
-            request.AddParameter("message", $"{loggedIn.Token},{loggedIn.Ip},{loggedIn.Sender}");
+            var message = $"{loggedIn.Token},{loggedIn.Ip},{loggedIn.Sender}";
+            request.AddParameter("message", message);
             var response = client.Execute(request);
 
             return response.Content;
@@ -122,6 +123,30 @@ namespace block_auth_api.Orchestration.DeviceContract
                 Resource = "/"
             };
             var client = new RestClient($"http://{url}");
+            var response = client.Execute(request);
+            return response.Content;
+        }
+
+        public string TurnDeviceOn(Device device)
+        {
+            var request = new RestRequest()
+            {
+                Method = Method.POST,
+                Resource = "/lights/on"
+            };
+            var client = new RestClient($"http://{device.Ip}");
+            var response = client.Execute(request);
+            return response.Content;
+        }
+
+        public string TurnDeviceOff(Device device)
+        {
+            var request = new RestRequest()
+            {
+                Method = Method.POST,
+                Resource = "/lights/off"
+            };
+            var client = new RestClient($"http://{device.Ip}");
             var response = client.Execute(request);
             return response.Content;
         }

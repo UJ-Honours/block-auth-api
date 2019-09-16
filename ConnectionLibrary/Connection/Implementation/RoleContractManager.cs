@@ -3,16 +3,19 @@ using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Text;
 
 namespace block_auth_api.Connection
 {
-    public class DeviceContractManager : IDeviceContractManager
+    public class RoleContractManager : IRoleContractManager
     {
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
 
-        public DeviceContractManager(DeviceContractOptions dco)
+        public RoleContractManager(RoleContractOptions dco)
         {
             var abi = JsonConvert.SerializeObject(dco.ABI).Replace('"', '\'');
             var contractAddress = dco.Address;
@@ -22,24 +25,18 @@ namespace block_auth_api.Connection
             _AdminAccount = dco.AdminAccount;
         }
 
-        public Function GetLoginAdminFunction()
+        public Function GetRolesFunction()
         {
-            return _ResourceContract.GetFunction("login_admin");
+            return _ResourceContract.GetFunction("roles");
+        }
+        public Function GetRoleCountFunction()
+        {
+            return _ResourceContract.GetFunction("roleCount");
         }
 
-        public Function GetDeviceCountFunction()
+        public Function GetCreateRoleFunction()
         {
-            return _ResourceContract.GetFunction("deviceCount");
-        }
-
-        public Function GetDevicesFunction()
-        {
-            return _ResourceContract.GetFunction("devices");
-        }
-
-        public Function GetAddDeviceFunction()
-        {
-            return _ResourceContract.GetFunction("addDevice");
+            return _ResourceContract.GetFunction("createRole");
         }
 
         public string AdminAccount()
@@ -56,5 +53,7 @@ namespace block_auth_api.Connection
         {
             return new HexBigInteger(new BigInteger(0));
         }
+
+
     }
 }

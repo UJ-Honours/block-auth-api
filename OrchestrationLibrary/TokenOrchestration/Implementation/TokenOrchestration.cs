@@ -1,5 +1,4 @@
 ﻿using block_auth_api.Models;
-using block_auth_api.Orchestration.UsersContract;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-namespace block_auth_api.Orchestration.TokenOrchestration
+namespace block_auth_api.Orchestration
 {
     public class TokenOrchestration : ITokenOrchestration
     {

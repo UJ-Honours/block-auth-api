@@ -22,7 +22,6 @@ namespace block_auth_api.Connection
             _AdminAccount = uco.AdminAccount;
         }
 
-
         public Function GetAddUserFunction()
         {
             return _ResourceContract.GetFunction("addUser");

@@ -1,9 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
-using block_auth_api.Orchestration.AccountContract;
-using block_auth_api.Orchestration.DeviceContract;
-using block_auth_api.Orchestration.TokenOrchestration;
-using block_auth_api.Orchestration.UsersContract;
+using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,16 +24,28 @@ namespace block_auth_api
 
         private void InjectOrchestration(IServiceCollection services)
         {
-
-            InjectContracts(services);
-
-            services.AddSingleton<IDeviceContractManager, DeviceContractManager>();
-            services.AddSingleton<IUserContractManager, UserContractManager>();
-
-            services.AddSingleton<IAccountContractOrchestration, AccountContractOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
             services.AddSingleton<ITokenOrchestration, TokenOrchestration>();
+            services.AddSingleton<IRoleOrchestration, RoleOrchestration>();
+            services.AddSingleton<ITaskOrchestration, TaskOrchestration>();
+        }
+
+        private void InjectDependencies(IServiceCollection services)
+        {
+            InjectOrchestration(services);
+            InjectContracts(services);
+            InjectContractManagers(services);
+            InjectCors(services);
+            InjectJWT(services);
+        }
+
+        private void InjectContractManagers(IServiceCollection services)
+        {
+            services.AddSingleton<IRoleContractManager, RoleContractManager>();
+            services.AddSingleton<IDeviceContractManager, DeviceContractManager>();
+            services.AddSingleton<IUserContractManager, UserContractManager>();
+            services.AddSingleton<ITaskContractManager, TaskContractManager>();
         }
 
         private void InjectContracts(IServiceCollection services)
@@ -48,6 +57,14 @@ namespace block_auth_api
             var userContract = Configuration.GetSection("User")
                 .Get<UserContractOptions>();
             services.AddSingleton(userContract);
+
+            var todoListContract = Configuration.GetSection("TodoList")
+                .Get<TaskContractOptions>();
+            services.AddSingleton(todoListContract);
+
+            var roleContract = Configuration.GetSection("Role")
+                .Get<RoleContractOptions>();
+            services.AddSingleton(roleContract);
 
         }
 
@@ -94,7 +111,7 @@ namespace block_auth_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            InjectOrchestration(services);
+            InjectDependencies(services);
 
             services.AddSwaggerGen(c =>
             {
@@ -104,10 +121,6 @@ namespace block_auth_api
 
             var MVC_VERSION = CompatibilityVersion.Version_2_2;
             services.AddMvc().SetCompatibilityVersion(MVC_VERSION);
-
-            InjectCors(services);
-
-            InjectJWT(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

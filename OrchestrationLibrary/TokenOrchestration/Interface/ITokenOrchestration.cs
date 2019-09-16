@@ -1,6 +1,6 @@
 ﻿using block_auth_api.Models;
 
-namespace block_auth_api.Orchestration.TokenOrchestration
+namespace block_auth_api.Orchestration
 {
     public interface ITokenOrchestration
     {
