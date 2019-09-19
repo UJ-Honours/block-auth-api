@@ -1,16 +1,15 @@
 ﻿using block_auth_api.Models;
-using System.Collections.Generic;
 
 namespace block_auth_api.Orchestration
 {
     public interface IRoleOrchestration
     {
-        void CreateRole(string name);
+        Role GetOwnerRole();
 
-        int GetRoleCount();
+        Role GetGuestRole();
 
-        Role GetRole(int index);
+        bool UpdateOwnerRole(Role role);
 
-        Dictionary<string, List<Role>> GetRoles();
+        bool UpdateGuestRole(Role role);
     }
 }

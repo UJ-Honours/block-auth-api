@@ -1,7 +1,5 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
-using System.Collections.Generic;
-using System.Numerics;
 
 namespace block_auth_api.Orchestration
 {
@@ -14,52 +12,60 @@ namespace block_auth_api.Orchestration
             _ContractManager = contractManager;
         }
 
-        public Role GetRole(int index)
+        public Role GetGuestRole()
         {
-            var result = _ContractManager
-                    .GetRolesFunction()
-                    .CallDeserializingToObjectAsync<Role>(index);
-            result.Wait();
-            return result.Result;
+            var grFunction = _ContractManager
+                .GetGuestRoleFunction()
+                .CallAsync<Role>();
+
+            grFunction.Wait();
+
+            var guestRole = grFunction.Result;
+
+            return guestRole;
         }
 
-        public int GetRoleCount()
+        public Role GetOwnerRole()
         {
-            var roleCountFunction = _ContractManager
-                .GetRoleCountFunction()
-                .CallAsync<BigInteger>();
-            roleCountFunction.Wait();
-            var roleCount = (int)roleCountFunction.Result;
-            return roleCount;
+            var orFunction = _ContractManager
+                .GetOwnerRoleFunction()
+                .CallAsync<Role>();
+
+            orFunction.Wait();
+
+            var ownerRole = orFunction.Result;
+
+            return ownerRole;
         }
 
-        public void CreateRole(string name)
+        public bool UpdateGuestRole(Role role)
         {
             var accountAddress = _ContractManager.AdminAccount();
             var gas = _ContractManager.GetGasAmount();
             var value = _ContractManager.GetValueAmount();
 
             var loginFunction = _ContractManager
-                .GetCreateRoleFunction()
-                .SendTransactionAsync(accountAddress, gas, value, name);
+                .GetUpdateGuestRoleFunction()
+                .SendTransactionAsync(accountAddress, gas, value, role.On, role.Off);
+
             loginFunction.Wait();
+
+            return true;
         }
 
-        public Dictionary<string, List<Role>> GetRoles()
+        public bool UpdateOwnerRole(Role role)
         {
-            var roleDictionary = new Dictionary<string, List<Role>>();
-            var roleList = new List<Role>();
+            var accountAddress = _ContractManager.AdminAccount();
+            var gas = _ContractManager.GetGasAmount();
+            var value = _ContractManager.GetValueAmount();
 
-            var roleCount = GetRoleCount();
+            var loginFunction = _ContractManager
+                .GetUpdateOwnerRoleFunction()
+                .SendTransactionAsync(accountAddress, gas, value, role.On, role.Off);
 
-            for (int i = 0; i <= roleCount; i++)
-            {
-                var role = GetRole(i);
-                roleList.Add(role);
-            }
+            loginFunction.Wait();
 
-            roleDictionary.Add("roles", roleList);
-            return roleDictionary;
+            return true;
         }
     }
 }

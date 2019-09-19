@@ -3,10 +3,7 @@ using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace block_auth_api.Connection
 {
@@ -25,18 +22,14 @@ namespace block_auth_api.Connection
             _AdminAccount = dco.AdminAccount;
         }
 
-        public Function GetRolesFunction()
+        public Function GetOwnerRoleFunction()
         {
-            return _ResourceContract.GetFunction("roles");
-        }
-        public Function GetRoleCountFunction()
-        {
-            return _ResourceContract.GetFunction("roleCount");
+            return _ResourceContract.GetFunction("or");
         }
 
-        public Function GetCreateRoleFunction()
+        public Function GetGuestRoleFunction()
         {
-            return _ResourceContract.GetFunction("createRole");
+            return _ResourceContract.GetFunction("gr");
         }
 
         public string AdminAccount()
@@ -54,6 +47,14 @@ namespace block_auth_api.Connection
             return new HexBigInteger(new BigInteger(0));
         }
 
+        public Function GetUpdateOwnerRoleFunction()
+        {
+            return _ResourceContract.GetFunction("UpdateOwnerRole");
+        }
 
+        public Function GetUpdateGuestRoleFunction()
+        {
+            return _ResourceContract.GetFunction("UpdateGuestRole");
+        }
     }
 }

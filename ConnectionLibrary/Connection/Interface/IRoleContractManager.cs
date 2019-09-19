@@ -5,11 +5,13 @@ namespace block_auth_api.Connection
 {
     public interface IRoleContractManager
     {
-        Function GetCreateRoleFunction();
+        Function GetOwnerRoleFunction();
 
-        Function GetRolesFunction();
+        Function GetGuestRoleFunction();
 
-        Function GetRoleCountFunction();
+        Function GetUpdateOwnerRoleFunction();
+
+        Function GetUpdateGuestRoleFunction();
 
         string AdminAccount();
 

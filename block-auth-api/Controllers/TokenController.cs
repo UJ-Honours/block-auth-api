@@ -19,7 +19,7 @@ namespace block_auth_api.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("create_token")]
+        [Route("create_token"),Authorize]
         public ActionResult CreateToken([FromBody]User login)
         {
             try

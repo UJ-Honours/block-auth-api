@@ -7,7 +7,7 @@ using System;
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize]
     public class RolesController : Controller
     {
         private readonly IRoleOrchestration _RO;
@@ -17,24 +17,9 @@ namespace block_auth_api.Controllers
             _RO = ro;
         }
 
-        [HttpGet]
-        [Route("get_roles")]
-        public ActionResult GetDevices()
-        {
-            try
-            {
-                var roleDictionary = _RO.GetRoles();
-                return Ok(roleDictionary);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPost]
-        [Route("update_role_permissions")]
-        public ActionResult UpdateRolePermissions()
+        [Route("update_owner_role_permissions")]
+        public ActionResult UpdateOwnerRolePermissions([FromBody] Role role)
         {
             try
             {
@@ -43,9 +28,46 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                _RO.CreateRole("owner");
+                var success = _RO.UpdateOwnerRole(role);
 
-                return Ok();
+                if (success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Something went wrong");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("update_guest_role_permissions")]
+        public ActionResult UpdateGuestRolePermissions([FromBody] Role role)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid Model Passed");
+                }
+
+                var success = _RO.UpdateGuestRole(role);
+
+                if (success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Something went wrong");
+                }
+
             }
             catch (Exception ex)
             {

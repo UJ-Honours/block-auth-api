@@ -7,7 +7,7 @@ using System;
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize]
     public class DevicesController : Controller
     {
         private readonly IDeviceContractOrchestration _DCO;
