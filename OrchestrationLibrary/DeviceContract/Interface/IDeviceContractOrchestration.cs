@@ -21,7 +21,7 @@ namespace block_auth_api.Orchestration
 
         string AccessDevice(LoggedIn loggedIn);
 
-        string GetDevice(string url);
+        bool GetDevice(string url);
 
         string TurnDeviceOn(Device device);
 

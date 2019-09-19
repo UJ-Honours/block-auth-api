@@ -14,7 +14,10 @@ namespace block_auth_api.Models
         [Parameter("string", "ip", 3)]
         public string Ip { get; set; }
 
-        [Parameter("string","role",4)]
+        [Parameter("string", "status", 4)]
+        public string Status { get; set; }
+
+        [Parameter("string","role",5)]
         public string Role { get; set; }
 
     }

@@ -28,7 +28,6 @@ namespace block_auth_api
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
             services.AddSingleton<ITokenOrchestration, TokenOrchestration>();
             services.AddSingleton<IRoleOrchestration, RoleOrchestration>();
-            services.AddSingleton<ITaskOrchestration, TaskOrchestration>();
         }
 
         private void InjectDependencies(IServiceCollection services)
@@ -45,7 +44,6 @@ namespace block_auth_api
             services.AddSingleton<IRoleContractManager, RoleContractManager>();
             services.AddSingleton<IDeviceContractManager, DeviceContractManager>();
             services.AddSingleton<IUserContractManager, UserContractManager>();
-            services.AddSingleton<ITaskContractManager, TaskContractManager>();
         }
 
         private void InjectContracts(IServiceCollection services)
@@ -57,10 +55,6 @@ namespace block_auth_api
             var userContract = Configuration.GetSection("User")
                 .Get<UserContractOptions>();
             services.AddSingleton(userContract);
-
-            var todoListContract = Configuration.GetSection("TodoList")
-                .Get<TaskContractOptions>();
-            services.AddSingleton(todoListContract);
 
             var roleContract = Configuration.GetSection("Role")
                 .Get<RoleContractOptions>();

@@ -1,5 +1,6 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
+using Nethereum.Signer;
 using RestSharp;
 using System.Collections.Generic;
 using System.Numerics;
@@ -20,7 +21,9 @@ namespace block_auth_api.Orchestration
             var result = _ContractManager
                     .GetDevicesFunction()
                     .CallDeserializingToObjectAsync<Device>(index);
+
             result.Wait();
+
             return result.Result;
         }
 
@@ -70,7 +73,13 @@ namespace block_auth_api.Orchestration
 
             for (int i = 1; i <= size; i++)
             {
+                
                 var device = GetDevice(i);
+                var status = GetDevice(device.Ip);
+                if (status)
+                {
+                    device.Status = "online";
+                }
                 deviceList.Add(device);
             }
 
@@ -120,7 +129,8 @@ namespace block_auth_api.Orchestration
 
             var client = new RestClient($"http://{loggedIn.Ip}");
 
-            var message = $"{loggedIn.Token},{loggedIn.Ip},{loggedIn.Sender}";
+            var message = $"{loggedIn.Token},{loggedIn.Ip},{loggedIn.Sender},{loggedIn.Role}";
+
             request.AddParameter("message", message);
 
             var response = client.Execute(request);
@@ -128,7 +138,7 @@ namespace block_auth_api.Orchestration
             return response.Content;
         }
 
-        public string GetDevice(string url)
+        public bool GetDevice(string url)
         {
             var request = new RestRequest()
             {
@@ -140,7 +150,11 @@ namespace block_auth_api.Orchestration
 
             var response = client.Execute(request);
 
-            return response.Content;
+            if (response.IsSuccessful)
+            {
+                return true;
+            }
+            return false;
         }
 
         public string TurnDeviceOn(Device device)
