@@ -136,7 +136,7 @@ namespace block_auth_api
                 c.SwaggerEndpoint("v1/swagger.json", "Blockchain Voting System API");
             });
             app.UseAuthentication();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

@@ -12,11 +12,11 @@ namespace block_auth_api.Orchestration
             _ContractManager = contractManager;
         }
 
-        public Role GetGuestRole()
+        public RolePermission GetGuestRole()
         {
             var grFunction = _ContractManager
                 .GetGuestRoleFunction()
-                .CallAsync<Role>();
+                .CallAsync<RolePermission>();
 
             grFunction.Wait();
 
@@ -25,11 +25,11 @@ namespace block_auth_api.Orchestration
             return guestRole;
         }
 
-        public Role GetOwnerRole()
+        public RolePermission GetOwnerRole()
         {
             var orFunction = _ContractManager
                 .GetOwnerRoleFunction()
-                .CallAsync<Role>();
+                .CallAsync<RolePermission>();
 
             orFunction.Wait();
 
@@ -38,7 +38,7 @@ namespace block_auth_api.Orchestration
             return ownerRole;
         }
 
-        public bool UpdateGuestRole(Role role)
+        public bool UpdateGuestRole(RolePermission role)
         {
             var accountAddress = _ContractManager.AdminAccount();
             var gas = _ContractManager.GetGasAmount();
@@ -53,7 +53,7 @@ namespace block_auth_api.Orchestration
             return true;
         }
 
-        public bool UpdateOwnerRole(Role role)
+        public bool UpdateOwnerRole(RolePermission role)
         {
             var accountAddress = _ContractManager.AdminAccount();
             var gas = _ContractManager.GetGasAmount();

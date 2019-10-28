@@ -3,7 +3,7 @@
 namespace block_auth_api.Models
 {
     [FunctionOutput]
-    public class Role
+    public class RolePermission
     {
         [Parameter("bool", "on", 1)]
         public int On { get; set; }

@@ -19,7 +19,7 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("update_owner_role_permissions")]
-        public ActionResult UpdateOwnerRolePermissions([FromBody] Role role)
+        public ActionResult UpdateOwnerRolePermissions([FromBody] RolePermission role)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace block_auth_api.Controllers
 
         [HttpPost]
         [Route("update_guest_role_permissions")]
-        public ActionResult UpdateGuestRolePermissions([FromBody] Role role)
+        public ActionResult UpdateGuestRolePermissions([FromBody] RolePermission role)
         {
             try
             {

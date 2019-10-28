@@ -7,7 +7,7 @@ using System;
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"),Authorize]
     public class DevicesController : Controller
     {
         private readonly IDeviceContractOrchestration _DCO;
@@ -24,7 +24,15 @@ namespace block_auth_api.Controllers
             try
             {
                 var deviceDictionary = _DCO.GetDevices();
-                return Ok(deviceDictionary);
+
+                if (deviceDictionary != null)
+                {
+                    return Ok(deviceDictionary);
+                }
+                else
+                {
+                    return Ok("No devices registered");
+                }
             }
             catch (Exception ex)
             {

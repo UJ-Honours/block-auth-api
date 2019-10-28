@@ -4,12 +4,12 @@ namespace block_auth_api.Orchestration
 {
     public interface IRoleOrchestration
     {
-        Role GetOwnerRole();
+        RolePermission GetOwnerRole();
 
-        Role GetGuestRole();
+        RolePermission GetGuestRole();
 
-        bool UpdateOwnerRole(Role role);
+        bool UpdateOwnerRole(RolePermission role);
 
-        bool UpdateGuestRole(Role role);
+        bool UpdateGuestRole(RolePermission role);
     }
 }

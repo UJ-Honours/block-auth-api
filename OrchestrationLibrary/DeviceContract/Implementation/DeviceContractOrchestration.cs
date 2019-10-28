@@ -1,7 +1,7 @@
 ﻿using block_auth_api.Connection;
 using block_auth_api.Models;
-using Nethereum.Signer;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -68,27 +68,41 @@ namespace block_auth_api.Orchestration
 
         public Dictionary<string, List<Device>> GetDevices()
         {
-            var deviceList = new List<Device>();
-            var size = GetDeviceCount();
-
-            for (int i = 1; i <= size; i++)
+            try
             {
-                
-                var device = GetDevice(i);
-                var status = GetDevice(device.Ip);
-                if (status)
+                var deviceList = new List<Device>();
+                var size = GetDeviceCount();
+                if (size > 0)
                 {
-                    device.Status = "online";
-                }
-                deviceList.Add(device);
-            }
 
-            var deviceDictionary = new Dictionary<string, List<Device>>
+                    for (int i = 1; i <= size; i++)
+                    {
+
+                        var device = GetDevice(i);
+                        var status = GetDevice(device.Ip);
+                        if (status)
+                        {
+                            device.Status = "online";
+                        }
+                        deviceList.Add(device);
+                    }
+
+                    var deviceDictionary = new Dictionary<string, List<Device>>
             {
                 { "devices", deviceList }
             };
 
-            return deviceDictionary;
+                    return deviceDictionary;
+
+                }
+                else
+                {
+                    return null;
+                }
+            }catch(Exception ex)
+            {
+                return new Dictionary<string, List<Device>>();
+            }
         }
 
         public void TriggerEvent(LoggedIn loggedIn)
