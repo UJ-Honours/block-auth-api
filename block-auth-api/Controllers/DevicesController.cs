@@ -2,19 +2,22 @@
 using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelsLibrary.Models;
+using OrchestrationLibrary.LogsOrchestration;
 using System;
 
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]"),Authorize]
+    [Route("api/[controller]")]
     public class DevicesController : Controller
     {
         private readonly IDeviceContractOrchestration _DCO;
-
-        public DevicesController(IDeviceContractOrchestration dco)
+        private readonly ILogsOrchestration _LCO;
+        public DevicesController(IDeviceContractOrchestration dco, ILogsOrchestration lco)
         {
             _DCO = dco;
+            _LCO = lco;
         }
 
         [HttpGet]
@@ -47,6 +50,7 @@ namespace block_auth_api.Controllers
             try
             {
                 var result = _DCO.GetDevice(url);
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -67,7 +71,13 @@ namespace block_auth_api.Controllers
                 }
 
                 _DCO.TriggerEvent(loggedIn);
-
+                var log = new Log()
+                {
+                    Account = loggedIn.Sender,
+                    Action = $"{loggedIn.Ip} accessed",
+                    Role = loggedIn.Role
+                };
+                _LCO.AddLog(log);
                 return Ok();
             }
             catch (Exception ex)
@@ -87,8 +97,16 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                _DCO.AddDevice(device);
-
+                if (!_DCO.AddDevice(device))
+                {
+                    BadRequest("Failed To Add Device");
+                };
+                var log = new Log()
+                {
+                    Action = $"{device.Ip} accessed",
+                    Role = device.Role
+                };
+                _LCO.AddLog(log);
                 return Ok(device);
             }
             catch (Exception ex)
@@ -108,7 +126,7 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                _DCO.AddDevice(device);
+                //_DCO.AddDevice(device);
 
                 return Ok(device);
             }
@@ -171,6 +189,7 @@ namespace block_auth_api.Controllers
                 }
 
                 var result = _DCO.TurnDeviceOn(device);
+
                 return Ok(result);
             }
             catch (Exception ex)

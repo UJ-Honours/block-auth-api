@@ -40,17 +40,27 @@ namespace block_auth_api.Orchestration
             return deviceCount;
         }
 
-        public void AddDevice(Device device)
+        public bool AddDevice(Device device)
         {
-            var accountAddress = _ContractManager.AdminAccount();
-            var gas = _ContractManager.GetGasAmount();
-            var value = _ContractManager.GetValueAmount();
+            try
+            {
+                var accountAddress = _ContractManager.AdminAccount();
+                var gas = _ContractManager.GetGasAmount();
+                var value = _ContractManager.GetValueAmount();
 
-            var loginFunction = _ContractManager
-                .GetAddDeviceFunction()
-                .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Ip, device.Role);
+                var loginFunction = _ContractManager
+                    .GetAddDeviceFunction()
+                    .SendTransactionAsync(accountAddress, gas, value, device.Name, device.Ip, device.Role);
 
-            loginFunction.Wait();
+                loginFunction.Wait();
+
+                return true;
+
+            }catch(Exception ex)
+            {
+                return false;
+            }
+            
         }
 
         public void RemoveDevice(Device device)
@@ -88,9 +98,9 @@ namespace block_auth_api.Orchestration
                     }
 
                     var deviceDictionary = new Dictionary<string, List<Device>>
-            {
-                { "devices", deviceList }
-            };
+                    {
+                        { "devices", deviceList }
+                    };
 
                     return deviceDictionary;
 
@@ -176,7 +186,7 @@ namespace block_auth_api.Orchestration
             var request = new RestRequest()
             {
                 Method = Method.POST,
-                Resource = "/lights/on"
+                Resource = "/on"
             };
 
             var client = new RestClient($"http://{device.Ip}");
@@ -191,7 +201,7 @@ namespace block_auth_api.Orchestration
             var request = new RestRequest()
             {
                 Method = Method.POST,
-                Resource = "/lights/off"
+                Resource = "/off"
             };
 
             var client = new RestClient($"http://{device.Ip}");

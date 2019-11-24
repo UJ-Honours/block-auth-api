@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using OrchestrationLibrary.LogsOrchestration;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
 
@@ -24,10 +25,12 @@ namespace block_auth_api
 
         private void InjectOrchestration(IServiceCollection services)
         {
+            services.AddSingleton<ILogsOrchestration, LogsOrchestration>();
             services.AddSingleton<IDeviceContractOrchestration, DeviceContractOrchestration>();
             services.AddSingleton<IUsersContractOrchestration, UsersContractOrchestration>();
             services.AddSingleton<ITokenOrchestration, TokenOrchestration>();
-            services.AddSingleton<IRoleOrchestration, RoleOrchestration>();
+            services.AddSingleton<IOwnerRoleOrchestration, OwnerRoleOrchestration>();
+            services.AddSingleton<IGuestRoleOrchestration, GuestRoleOrchestration>();
         }
 
         private void InjectDependencies(IServiceCollection services)
@@ -41,13 +44,19 @@ namespace block_auth_api
 
         private void InjectContractManagers(IServiceCollection services)
         {
-            services.AddSingleton<IRoleContractManager, RoleContractManager>();
+            services.AddSingleton<ILogContractManager, LogContractManager>();
+            services.AddSingleton<IGuestRoleContractManager, GuestRoleContractManager>();
+            services.AddSingleton<IOwnerRoleContractManager, OwnerRoleContractManager>();
             services.AddSingleton<IDeviceContractManager, DeviceContractManager>();
             services.AddSingleton<IUserContractManager, UserContractManager>();
         }
 
         private void InjectContracts(IServiceCollection services)
         {
+            var LogContract = Configuration.GetSection("Log")
+               .Get<LogContractOptions>();
+            services.AddSingleton(LogContract);
+
             var deviceContract = Configuration.GetSection("Device")
                 .Get<DeviceContractOptions>();
             services.AddSingleton(deviceContract);
@@ -56,9 +65,13 @@ namespace block_auth_api
                 .Get<UserContractOptions>();
             services.AddSingleton(userContract);
 
-            var roleContract = Configuration.GetSection("Role")
-                .Get<RoleContractOptions>();
-            services.AddSingleton(roleContract);
+            var guestRoleContract = Configuration.GetSection("GuestRole")
+                .Get<GuestRoleContractOptions>();
+            services.AddSingleton(guestRoleContract);
+
+            var ownerRoleContract = Configuration.GetSection("OwnerRole")
+                .Get<OwnerRoleContractOptions>();
+            services.AddSingleton(ownerRoleContract);
 
         }
 

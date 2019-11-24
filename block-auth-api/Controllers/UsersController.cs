@@ -2,6 +2,8 @@
 using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelsLibrary.Models;
+using OrchestrationLibrary.LogsOrchestration;
 using System;
 using System.Collections.Generic;
 
@@ -12,10 +14,12 @@ namespace block_auth_api.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersContractOrchestration _UCO;
+        private readonly ILogsOrchestration _LCO;
 
-        public UsersController(IUsersContractOrchestration uco)
+        public UsersController(IUsersContractOrchestration uco, ILogsOrchestration lco)
         {
             _UCO = uco;
+            _LCO = lco;
         }
 
         [HttpGet]
@@ -49,9 +53,15 @@ namespace block_auth_api.Controllers
                 {
                     return BadRequest("Invalid Model Passed");
                 }
-
+                var log = new Log()
+                {
+                    Account = user.Account,
+                    Action = $"{user.Username} added",
+                    Role = user.Role
+                };
+                
                 _UCO.AddUser(user);
-
+                _LCO.AddLog(log);
                 return Ok(user);
             }
             catch (Exception ex)

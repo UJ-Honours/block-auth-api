@@ -7,12 +7,12 @@ using System.Numerics;
 
 namespace block_auth_api.Connection
 {
-    public class RoleContractManager : IRoleContractManager
+    public class GuestRoleContractManager : IGuestRoleContractManager
     {
         private readonly Contract _ResourceContract;
         private readonly string _AdminAccount;
 
-        public RoleContractManager(RoleContractOptions dco)
+        public GuestRoleContractManager(GuestRoleContractOptions dco)
         {
             var abi = JsonConvert.SerializeObject(dco.ABI).Replace('"', '\'');
             var contractAddress = dco.Address;
@@ -22,14 +22,14 @@ namespace block_auth_api.Connection
             _AdminAccount = dco.AdminAccount;
         }
 
-        public Function GetOwnerRoleFunction()
+        public Function GetOnFunction()
         {
-            return _ResourceContract.GetFunction("or");
+            return _ResourceContract.GetFunction("on");
         }
 
-        public Function GetGuestRoleFunction()
+        public Function GetOffFunction()
         {
-            return _ResourceContract.GetFunction("gr");
+            return _ResourceContract.GetFunction("off");
         }
 
         public string AdminAccount()
@@ -47,14 +47,11 @@ namespace block_auth_api.Connection
             return new HexBigInteger(new BigInteger(0));
         }
 
-        public Function GetUpdateOwnerRoleFunction()
-        {
-            return _ResourceContract.GetFunction("UpdateOwnerRole");
-        }
-
         public Function GetUpdateGuestRoleFunction()
         {
-            return _ResourceContract.GetFunction("UpdateGuestRole");
+            return _ResourceContract.GetFunction("updateGuestRole");
         }
+
+
     }
 }

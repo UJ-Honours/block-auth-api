@@ -2,6 +2,8 @@
 using block_auth_api.Orchestration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelsLibrary.Models;
+using OrchestrationLibrary.LogsOrchestration;
 using System;
 
 namespace block_auth_api.Controllers
@@ -11,15 +13,16 @@ namespace block_auth_api.Controllers
     public class TokenController : Controller
     {
         private readonly ITokenOrchestration _TokenOrchestration;
-
-        public TokenController(ITokenOrchestration tokenOrchestration)
+        private readonly ILogsOrchestration _LCO;
+        public TokenController(ITokenOrchestration tokenOrchestration, ILogsOrchestration lco)
         {
             _TokenOrchestration = tokenOrchestration;
+            _LCO = lco;
         }
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("create_token"),Authorize]
+        [Route("create_token")]
         public ActionResult CreateToken([FromBody]User login)
         {
             try
@@ -35,6 +38,13 @@ namespace block_auth_api.Controllers
                 }
                 var tokenString = _TokenOrchestration.BuildToken(login);
                 user.Token = tokenString;
+                var log = new Log()
+                {
+                    Account = user.Account,
+                    Action = $"{user.Username} logged in",
+                    Role = user.Role
+                };
+                _LCO.AddLog(log);
                 return Ok(user);
             }
             catch (Exception ex)

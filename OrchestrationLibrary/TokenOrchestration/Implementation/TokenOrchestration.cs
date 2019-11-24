@@ -60,7 +60,7 @@ namespace block_auth_api.Orchestration
                 validUser.Password = "";
                 return validUser;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return user = null;
             }

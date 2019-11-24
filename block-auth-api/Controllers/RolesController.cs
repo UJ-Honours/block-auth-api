@@ -7,14 +7,39 @@ using System;
 namespace block_auth_api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]"), Authorize]
+    [Route("api/[controller]")]
     public class RolesController : Controller
     {
-        private readonly IRoleOrchestration _RO;
+        private readonly IOwnerRoleOrchestration _ORO;
+        private readonly IGuestRoleOrchestration _GRO;
 
-        public RolesController(IRoleOrchestration ro)
+        public RolesController(IOwnerRoleOrchestration oro, IGuestRoleOrchestration gro)
         {
-            _RO = ro;
+            _ORO = oro;
+            _GRO = gro;
+        }
+
+        [HttpGet]
+        [Route("get_owner_roles")]
+        public ActionResult GetOwnerRoles()
+        {
+            var ownerRole = new OwnerRole() { 
+                Off= _ORO.GetOwnerRoleOff(),
+                On = _ORO.GetOwnerRoleOn()
+            };
+            return Ok(ownerRole);
+        }
+
+        [HttpGet]
+        [Route("get_guest_roles")]
+        public ActionResult GetGuestRoles()
+        {
+            var guestRole = new GuestRole()
+            {
+                Off = _GRO.GetGuestRoleOff(),
+                On = _GRO.GetGuestRoleOn()
+            };
+            return Ok(guestRole);
         }
 
         [HttpPost]
@@ -28,7 +53,7 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                var success = _RO.UpdateOwnerRole(role);
+                var success = _ORO.UpdateOwnerRole(role);
 
                 if (success)
                 {
@@ -57,15 +82,15 @@ namespace block_auth_api.Controllers
                     return BadRequest("Invalid Model Passed");
                 }
 
-                var success = _RO.UpdateGuestRole(role);
+                var success = _GRO.UpdateGuestRole(role);
 
                 if (success)
                 {
-                    return Ok();
+                    return Ok("Guest Permissions Changed Successfully");
                 }
                 else
                 {
-                    return BadRequest("Something went wrong");
+                    return BadRequest("Something wrong happened");
                 }
 
             }

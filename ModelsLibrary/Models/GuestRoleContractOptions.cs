@@ -2,7 +2,7 @@
 
 namespace block_auth_api.Models
 {
-    public class RoleContractOptions
+    public class GuestRoleContractOptions
     {
         public string Endpoint { get; set; }
 

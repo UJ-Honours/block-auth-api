@@ -3,13 +3,11 @@ using Nethereum.Hex.HexTypes;
 
 namespace block_auth_api.Connection
 {
-    public interface IRoleContractManager
+    public interface IGuestRoleContractManager
     {
-        Function GetOwnerRoleFunction();
+        Function GetOnFunction();
 
-        Function GetGuestRoleFunction();
-
-        Function GetUpdateOwnerRoleFunction();
+        Function GetOffFunction();
 
         Function GetUpdateGuestRoleFunction();
 

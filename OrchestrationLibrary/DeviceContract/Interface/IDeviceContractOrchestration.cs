@@ -13,7 +13,7 @@ namespace block_auth_api.Orchestration
 
         void TriggerEvent(LoggedIn loggedIn);
 
-        void AddDevice(Device device);
+        bool AddDevice(Device device);
 
         void RemoveDevice(Device device);
 
